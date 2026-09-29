@@ -11,8 +11,8 @@ import { availableParallelism } from 'node:os';
 import { mkdirSync, writeFileSync, existsSync, unlinkSync } from 'node:fs';
 import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { createCanvas, GlobalFonts } from '@napi-rs/canvas';
-import { W, H, FPS, DURATION, BEAT, FAST, draw } from '../src/scene.js';
+import { createCanvas, GlobalFonts, loadImage } from '@napi-rs/canvas';
+import { W, H, FPS, DURATION, BEAT, FAST, IMAGE_FILES, setImages, draw } from '../src/scene.js';
 
 const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const BUILD = join(ROOT, 'build');
@@ -26,8 +26,12 @@ const opt = (name, def) => {
   return v === undefined || v.startsWith('--') ? true : v;
 };
 
-for (const w of [400, 500, 600, 700, 800]) GlobalFonts.registerFromPath(join(ROOT, `assets/fonts/Geist-${w}.ttf`), 'Geist');
-for (const w of [400, 500, 700]) GlobalFonts.registerFromPath(join(ROOT, `assets/fonts/GeistMono-${w}.ttf`), 'Geist Mono');
+for (const w of [400, 500, 600, 700]) GlobalFonts.registerFromPath(join(ROOT, `assets/fonts/SpaceGrotesk-${w}.ttf`), 'Space Grotesk');
+for (const w of [400, 700]) GlobalFonts.registerFromPath(join(ROOT, `assets/fonts/SpaceMono-${w}.ttf`), 'Space Mono');
+
+const images = {};
+for (const [key, file] of Object.entries(IMAGE_FILES)) images[key] = await loadImage(join(ROOT, file));
+setImages(images);
 
 export async function ffmpegPath() {
   if (process.env.FFMPEG) return process.env.FFMPEG;
@@ -97,7 +101,7 @@ async function contact() {
       const x = (i % cols) * tw, y = Math.floor(i / cols) * (th + 28);
       sctx.drawImage(cv, x, y + 28, tw, th);
       sctx.fillStyle = '#fff';
-      sctx.font = '500 18px "Geist Mono"';
+      sctx.font = '400 18px "Space Mono"';
       sctx.fillText(`t=${t.toFixed(2)}s`, x + 8, y + 20);
     });
     const file = join(BUILD, `contact-${s + 1}.png`);

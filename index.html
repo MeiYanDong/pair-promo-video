@@ -5,21 +5,19 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>PAIR Promo Preview</title>
 <style>
-  @font-face { font-family: 'Geist'; font-weight: 400; src: url(assets/fonts/Geist-400.ttf); }
-  @font-face { font-family: 'Geist'; font-weight: 500; src: url(assets/fonts/Geist-500.ttf); }
-  @font-face { font-family: 'Geist'; font-weight: 600; src: url(assets/fonts/Geist-600.ttf); }
-  @font-face { font-family: 'Geist'; font-weight: 700; src: url(assets/fonts/Geist-700.ttf); }
-  @font-face { font-family: 'Geist'; font-weight: 800; src: url(assets/fonts/Geist-800.ttf); }
-  @font-face { font-family: 'Geist Mono'; font-weight: 400; src: url(assets/fonts/GeistMono-400.ttf); }
-  @font-face { font-family: 'Geist Mono'; font-weight: 500; src: url(assets/fonts/GeistMono-500.ttf); }
-  @font-face { font-family: 'Geist Mono'; font-weight: 700; src: url(assets/fonts/GeistMono-700.ttf); }
-  :root { --bg: #050607; --ink: #f2f3ee; --muted: #8b919a; --accent: #c6ff4a; }
+  @font-face { font-family: 'Space Grotesk'; font-weight: 400; src: url(assets/fonts/SpaceGrotesk-400.ttf); }
+  @font-face { font-family: 'Space Grotesk'; font-weight: 500; src: url(assets/fonts/SpaceGrotesk-500.ttf); }
+  @font-face { font-family: 'Space Grotesk'; font-weight: 600; src: url(assets/fonts/SpaceGrotesk-600.ttf); }
+  @font-face { font-family: 'Space Grotesk'; font-weight: 700; src: url(assets/fonts/SpaceGrotesk-700.ttf); }
+  @font-face { font-family: 'Space Mono'; font-weight: 400; src: url(assets/fonts/SpaceMono-400.ttf); }
+  @font-face { font-family: 'Space Mono'; font-weight: 700; src: url(assets/fonts/SpaceMono-700.ttf); }
+  :root { --bg: #050505; --ink: #f5f5f7; --muted: #98989d; --accent: #a855f7; }
   * { box-sizing: border-box; }
-  body { margin: 0; min-height: 100vh; background: var(--bg); color: var(--ink); font: 14px/1.4 'Geist Mono', ui-monospace, monospace; display: grid; place-items: center; padding: 16px; }
+  body { margin: 0; min-height: 100vh; background: var(--bg); color: var(--ink); font: 14px/1.4 'Space Mono', ui-monospace, monospace; display: grid; place-items: center; padding: 16px; }
   main { width: min(100%, 1280px); }
   canvas { width: 100%; aspect-ratio: 16 / 9; display: block; border-radius: 12px; background: #000; }
   .bar { display: flex; align-items: center; gap: 12px; margin-top: 12px; }
-  button { font: inherit; color: var(--bg); background: var(--accent); border: 0; border-radius: 999px; padding: 8px 18px; cursor: pointer; min-width: 84px; }
+  button { font: inherit; color: var(--bg); font-weight: 700; background: var(--accent); border: 0; border-radius: 999px; padding: 8px 18px; cursor: pointer; min-width: 84px; }
   input[type=range] { flex: 1; accent-color: var(--accent); }
   .time { color: var(--muted); min-width: 110px; text-align: right; font-variant-numeric: tabular-nums; }
   .scene { color: var(--muted); margin-top: 8px; min-height: 1.4em; }
@@ -37,7 +35,7 @@
   <audio id="audio" src="build/audio.wav" preload="auto"></audio>
 </main>
 <script type="module">
-  import { draw, DURATION, SCENES } from './src/scene.js';
+  import { draw, DURATION, SCENES, IMAGE_FILES, setImages } from './src/scene.js';
   const ctx = document.getElementById('c').getContext('2d');
   const audio = document.getElementById('audio');
   const play = document.getElementById('play');
@@ -86,9 +84,19 @@
     if (e.code === 'ArrowLeft') seek(Math.max(0, t - 0.5));
   });
 
-  const fams = ['400 10px Geist', '500 10px Geist', '600 10px Geist', '700 10px Geist', '800 10px Geist',
-    '400 10px "Geist Mono"', '500 10px "Geist Mono"', '700 10px "Geist Mono"'];
-  Promise.all(fams.map((f) => document.fonts.load(f))).then(() => requestAnimationFrame(render));
+  const fams = ['400 10px "Space Grotesk"', '500 10px "Space Grotesk"', '600 10px "Space Grotesk"', '700 10px "Space Grotesk"',
+    '400 10px "Space Mono"', '700 10px "Space Mono"'];
+  const images = {};
+  const loads = Object.entries(IMAGE_FILES).map(([key, src]) => {
+    const im = new Image();
+    im.src = src;
+    images[key] = im;
+    return im.decode();
+  });
+  Promise.all([...fams.map((f) => document.fonts.load(f)), ...loads]).then(() => {
+    setImages(images);
+    requestAnimationFrame(render);
+  });
 </script>
 </body>
 </html>

@@ -12,31 +12,48 @@ export const BEAT = 60 / BPM;
 export const BAR = BEAT * 4;
 export const DURATION = 32;
 
-// Brand tokens. PAIR's own palette could not be fetched from pair.fund in the
-// build environment, so these are a stand-in: swap them here and re-render.
+// Brand tokens, taken from pair.fund's CSS (dark theme, Sep 29 2026).
 export const P = {
-  bg: '#07080A',
-  ink: '#F2F3EE',
-  muted: '#8B919A',
-  dim: '#4B5059',
-  line: 'rgba(255,255,255,0.10)',
-  panel: '#0F1115',
-  panel2: '#161920',
-  panel3: '#23272F',
-  accent: '#C6FF4A',
-  accentInk: '#0B0E05',
-  red: '#FF5B4B',
+  bg: '#050505',
+  ink: '#F5F5F7',
+  muted: '#98989D',
+  dim: '#636366',
+  line: 'rgba(255,255,255,0.09)',
+  lineStrong: 'rgba(255,255,255,0.18)',
+  card: '#0D0D10',
+  panel: '#111114',
+  panel2: '#18181C',
+  panel3: '#25252B',
+  accent: '#A855F7',
+  accentHi: '#B975F9',
+  accentInk: '#050505',
+  red: '#F06455',
+  green: '#34D399',
 };
+const A = (a) => `rgba(168,85,247,${a})`;
 
-const SANS = 'Geist';
-const MONO = '"Geist Mono"';
+const SANS = '"Space Grotesk"';
+const MONO = '"Space Mono"';
 const font = (weight, size, fam = SANS) => `${weight} ${size}px ${fam}`;
 
-// Stock Tokens PAIR lists as launchable today (press release, Aug 31 2026).
+// Brand images from pair.fund, loaded by the host (render.mjs / index.html).
+export const IMAGE_FILES = {
+  logo: 'assets/brand/pair-logo.png',
+  bg: 'assets/brand/galaxy-bg.jpg',
+  left: 'assets/brand/puzzle-left.png',
+  right: 'assets/brand/puzzle-right.png',
+  joined: 'assets/brand/puzzle-joined.png',
+};
+let IMG = {};
+export function setImages(images) {
+  IMG = images;
+}
+
+// A selection of the Stock Tokens enabled in PAIR's registry (pair.fund/docs, Sep 29 2026).
 export const TICKERS = [
-  'AAPL', 'AMC', 'AMD', 'AMZN', 'BABA', 'BE', 'CRCL', 'CRWV',
-  'GOOGL', 'INTC', 'META', 'MSFT', 'MU', 'NVDA', 'ORCL', 'PLTR',
-  'QQQ', 'SGOV', 'SLV', 'SNDK', 'SPCX', 'SPY', 'TSLA', 'USAR',
+  'AAPL', 'AMD', 'AMZN', 'COIN', 'COST', 'GLD', 'GME', 'GOOGL',
+  'HIMS', 'META', 'MSFT', 'MSTR', 'NFLX', 'NVDA', 'PLTR', 'QQQ',
+  'RDDT', 'SHOP', 'SLV', 'SOFI', 'SPY', 'TSLA', 'TSM', 'USO',
 ];
 
 // Scene map (seconds). 120 BPM: one beat = 0.5 s, one bar = 2 s.
@@ -47,10 +64,10 @@ export const SCENES = [
   { name: 'Companies that print money', from: 6, to: 8 },
   { name: 'PAIR reveal', from: 8, to: 10 },
   { name: 'Launch UI', from: 10, to: 14 },
-  { name: 'One transaction, four pools', from: 14, to: 16 },
-  { name: 'No curve, no ceiling, no migration', from: 16, to: 18 },
+  { name: 'One transaction, four markets', from: 14, to: 16 },
+  { name: 'No curve, no migration', from: 16, to: 18 },
   { name: 'Same pool, year five', from: 18, to: 20 },
-  { name: '1% fee, 70/30 split', from: 20, to: 22 },
+  { name: 'Fee policies', from: 20, to: 22 },
   { name: 'Non-custodial', from: 22, to: 24 },
   { name: 'Traction', from: 24, to: 28 },
   { name: 'End card', from: 28, to: 32 },
@@ -59,7 +76,7 @@ export const SCENES = [
 // Windows with very fast camera moves. The renderer takes more motion-blur
 // subframes here so the blur reads as a smear rather than stepped copies.
 export const FAST = [
-  [1.5, 2.05], [5.7, 6.35], [7.6, 8.25], [9.5, 10.3], [13.95, 14.5], [28.5, 29.3],
+  [1.5, 2.05], [5.7, 6.35], [7.6, 8.25], [9.5, 10.3], [13.95, 14.5], [28.5, 29.3], [29.95, 30.35],
 ];
 
 // ---------------------------------------------------------------- timing cues
@@ -69,15 +86,18 @@ const NAME_T0 = 10.25, NAME_STEP = 0.075;
 const TICK = '$ORBIT';
 const TICK_T0 = 10.9, TICK_STEP = 0.07;
 const PICKS = [
-  { tk: 'NVDA', t: 11.5 },
-  { tk: 'TSLA', t: 12.0 },
-  { tk: 'AAPL', t: 12.5 },
-  { tk: 'SPY', t: 13.0 },
+  { tk: 'NVDA', t: 11.5, w: 40 },
+  { tk: 'TSLA', t: 12.0, w: 25 },
+  { tk: 'AAPL', t: 12.5, w: 20 },
+  { tk: 'SPY', t: 13.0, w: 15 },
 ];
 const LAUNCH_T = 14.0;
 const SIGN_T = 22.75;
 const TIMELINE_STEPS = [18.25, 18.5, 18.75, 19.0, 19.25];
+const FEE_CARDS_T = [20.3, 20.42, 20.54, 20.66];
+const FEE_MOVES = [20.75, 21.0, 21.25, 21.5];
 const STATS_T = [24.5, 25.0, 25.5, 26.0];
+const SNAP_T = 30.25;
 
 export const CUES = [
   { t: 0.5, k: 'tick' }, { t: 1.0, k: 'tick' },
@@ -97,11 +117,15 @@ export const CUES = [
   { t: 15.5, k: 'lock' },
   { t: 16.0, k: 'thud' }, { t: 16.5, k: 'thud' }, { t: 17.0, k: 'thud' },
   ...TIMELINE_STEPS.map((t) => ({ t, k: 'tick' })),
-  { t: 20.0, k: 'hit' }, { t: 20.5, k: 'swipe' }, { t: 20.75, k: 'swipe' },
+  { t: 20.0, k: 'hit' },
+  ...FEE_CARDS_T.map((t) => ({ t, k: 'pop' })),
+  ...FEE_MOVES.map((t) => ({ t, k: 'swipe' })),
   { t: SIGN_T, k: 'click' }, { t: SIGN_T + 0.08, k: 'ding' },
   ...STATS_T.map((t) => ({ t, k: 'count' })),
   { t: 28.0, k: 'whoosh' },
-  { t: 29.0, k: 'impact' }, { t: 30.0, k: 'ding' },
+  { t: 29.0, k: 'impact' },
+  { t: 29.95, k: 'whoosh' }, { t: SNAP_T, k: 'snap' }, { t: SNAP_T + 0.01, k: 'lock' },
+  { t: 30.6, k: 'ding' },
 ];
 
 // ---------------------------------------------------------------- math
@@ -167,6 +191,11 @@ function camera(ctx, cx, cy, s) {
   ctx.translate(-cx, -cy);
 }
 
+function img(ctx, key, x, y, w, h) {
+  const im = IMG[key];
+  if (im) ctx.drawImage(im, x, y, w, h);
+}
+
 function txt(ctx, s, x, y, { size = 24, weight = 500, fam = SANS, color = P.ink, align = 'left', alpha = 1, ls = 0 } = {}) {
   ctx.save();
   ctx.font = font(weight, size, fam);
@@ -179,7 +208,7 @@ function txt(ctx, s, x, y, { size = 24, weight = 500, fam = SANS, color = P.ink,
 }
 
 // Per-character layout so tracking can animate and centering stays stable.
-function tracked(ctx, str, cx, y, { size, weight = 800, fam = SANS, color = P.ink, tracking = 0, visible = Infinity, align = 'center' }) {
+function tracked(ctx, str, cx, y, { size, weight = 700, fam = SANS, color = P.ink, tracking = 0, visible = Infinity, align = 'center' }) {
   ctx.save();
   ctx.font = font(weight, size, fam);
   ctx.letterSpacing = '0px';
@@ -235,6 +264,61 @@ function words(ctx, t, s) {
   return { x0, total, toks };
 }
 
+// Glossy purple sphere, after the orb in PAIR's logo.
+function orb(ctx, x, y, r, alpha = 1) {
+  if (r <= 0 || alpha <= 0) return;
+  ctx.save();
+  ctx.globalAlpha *= alpha;
+  ctx.shadowColor = A(0.55);
+  ctx.shadowBlur = r * 0.6;
+  const g = ctx.createRadialGradient(x - r * 0.38, y - r * 0.42, r * 0.04, x, y, r);
+  g.addColorStop(0, '#F5EBFF');
+  g.addColorStop(0.2, '#C98BFB');
+  g.addColorStop(0.55, '#9333EA');
+  g.addColorStop(1, '#3B0F6E');
+  ctx.fillStyle = g;
+  circle(ctx, x, y, r);
+  ctx.fill();
+  ctx.restore();
+}
+
+// Glass card in the style of pair.fund's panels.
+function glass(ctx, x, y, w, h, r, { shadow = true, glow = 0.12, border = P.line } = {}) {
+  ctx.save();
+  if (shadow) {
+    ctx.shadowColor = 'rgba(0,0,0,0.55)';
+    ctx.shadowBlur = 60;
+    ctx.shadowOffsetY = 20;
+  }
+  ctx.fillStyle = P.card;
+  rr(ctx, x, y, w, h, r);
+  ctx.fill();
+  ctx.shadowColor = 'transparent';
+  if (glow > 0) {
+    const g = ctx.createRadialGradient(x + w * 0.9, y - h * 0.1, 0, x + w * 0.9, y - h * 0.1, Math.max(w, h) * 0.75);
+    g.addColorStop(0, A(glow));
+    g.addColorStop(1, A(0));
+    ctx.fillStyle = g;
+    rr(ctx, x, y, w, h, r);
+    ctx.fill();
+  }
+  ctx.strokeStyle = border;
+  ctx.lineWidth = 1.5;
+  rr(ctx, x, y, w, h, r);
+  ctx.stroke();
+  ctx.restore();
+}
+
+// pair.fund's primary button fill
+function purpleFill(ctx, y, h) {
+  const g = ctx.createLinearGradient(0, y, 0, y + h);
+  g.addColorStop(0, 'rgba(212,153,255,0.98)');
+  g.addColorStop(0.3, 'rgba(187,106,247,0.97)');
+  g.addColorStop(0.72, 'rgba(170,76,235,0.97)');
+  g.addColorStop(1, 'rgba(183,96,248,0.98)');
+  return g;
+}
+
 function cursor(ctx, x, y, { scale = 1, alpha = 1, press = 0 } = {}) {
   if (alpha <= 0) return;
   ctx.save();
@@ -263,25 +347,25 @@ function clickRing(ctx, t, tc, x, y, s = 1) {
   if (k <= 0 || k >= 1) return;
   ctx.save();
   ctx.globalAlpha = (1 - k) * 0.9;
-  ctx.strokeStyle = P.accent;
+  ctx.strokeStyle = P.accentHi;
   ctx.lineWidth = 3 * s;
   circle(ctx, x, y, (8 + 34 * easeOut3(k)) * s);
   ctx.stroke();
   ctx.restore();
 }
 
-function lockIcon(ctx, x, y, s, color) {
+// Liquidity drop, marks each market's own pool.
+function dropIcon(ctx, x, y, s, color) {
   ctx.save();
   ctx.translate(x, y);
   ctx.scale(s, s);
   ctx.fillStyle = color;
-  rr(ctx, -10, -3, 20, 16, 4);
-  ctx.fill();
-  ctx.strokeStyle = color;
-  ctx.lineWidth = 3.2;
   ctx.beginPath();
-  ctx.arc(0, -3, 6.5, Math.PI, 0);
-  ctx.stroke();
+  ctx.moveTo(0, -12);
+  ctx.bezierCurveTo(5, -5, 9, 0, 9, 4);
+  ctx.arc(0, 4, 9, 0, Math.PI);
+  ctx.bezierCurveTo(-9, 0, -5, -5, 0, -12);
+  ctx.fill();
   ctx.restore();
 }
 
@@ -322,31 +406,40 @@ function fmtInt(n) {
 }
 
 // ---------------------------------------------------------------- background
-function background(ctx, t, gridScale = 1) {
+function background(ctx, t, zoom = 1) {
   ctx.fillStyle = P.bg;
   ctx.fillRect(0, 0, W, H);
 
-  // soft accent glow that breathes with the big hits
+  // pair.fund's galaxy backdrop (moon rim, stars), drifting slowly
+  if (IMG.bg) {
+    const s = (1.06 + 0.02 * Math.sin(t * 0.2)) * zoom;
+    const dx = noise1(t * 0.05) * 20;
+    const dy = noise1(t * 0.05 + 9) * 12;
+    ctx.save();
+    ctx.globalAlpha = 0.85;
+    ctx.translate(W / 2 + dx, H / 2 + dy);
+    ctx.scale(s, s);
+    ctx.drawImage(IMG.bg, -W / 2, -H / 2, W, H);
+    ctx.restore();
+  }
+
+  // purple wash from the top, as on the site, breathing with the big hits
   const hit = Math.max(
-    Math.exp(-Math.max(0, t - 8.0) * 3) * (t >= 8 ? 1 : 0),
-    Math.exp(-Math.max(0, t - 29.0) * 3) * (t >= 29 ? 1 : 0),
+    t >= 8 ? Math.exp(-(t - 8.0) * 3) : 0,
+    t >= 29 ? Math.exp(-(t - 29.0) * 3) : 0,
   );
-  const gx = W / 2 + noise1(t * 0.15) * 260;
-  const gy = H / 2 + noise1(t * 0.12 + 40) * 140;
-  const g = ctx.createRadialGradient(gx, gy, 0, gx, gy, 980);
-  g.addColorStop(0, `rgba(198,255,74,${0.05 + 0.1 * hit})`);
-  g.addColorStop(1, 'rgba(198,255,74,0)');
+  const g = ctx.createRadialGradient(W / 2, -H * 0.1, 0, W / 2, -H * 0.1, W * 0.7);
+  g.addColorStop(0, A(0.14 + 0.2 * hit));
+  g.addColorStop(1, A(0));
   ctx.fillStyle = g;
   ctx.fillRect(0, 0, W, H);
-
-  // dot grid, drifting slowly, with a little parallax from the camera
-  const sp = 48 * gridScale;
-  const ox = (-t * 8 * gridScale) % sp;
-  const oy = (-t * 4 * gridScale) % sp;
-  ctx.fillStyle = 'rgba(255,255,255,0.055)';
-  const d = Math.max(1.5, 2 * gridScale);
-  for (let y = oy + (H / 2) % sp - sp; y < H + sp; y += sp)
-    for (let x = ox + (W / 2) % sp - sp; x < W + sp; x += sp) ctx.fillRect(x, y, d, d);
+  const gx = W / 2 + noise1(t * 0.15) * 260;
+  const gy = H * 0.6 + noise1(t * 0.12 + 40) * 140;
+  const g2 = ctx.createRadialGradient(gx, gy, 0, gx, gy, 900);
+  g2.addColorStop(0, A(0.05 + 0.12 * hit));
+  g2.addColorStop(1, A(0));
+  ctx.fillStyle = g2;
+  ctx.fillRect(0, 0, W, H);
 }
 
 function vignette(ctx) {
@@ -357,7 +450,7 @@ function vignette(ctx) {
   ctx.fillRect(0, 0, W, H);
 }
 
-// Huge outlined tickers scrolling in alternating directions.
+// Huge tickers scrolling in alternating directions.
 function tickerWall(ctx, t, alpha, speed = 1) {
   if (alpha <= 0) return;
   ctx.save();
@@ -379,7 +472,7 @@ function tickerWall(ctx, t, alpha, speed = 1) {
 }
 
 // ---------------------------------------------------------------- scenes
-// S1: "Every token needs a pair." The period is a lime dot; the camera dives into it.
+// S1: "Every token needs a pair." The period is a purple orb; the camera dives into it.
 const DOT_ZOOM = 14;
 const HOOK_SIZE = 150;
 function sceneHook(ctx, t) {
@@ -392,9 +485,9 @@ function sceneHook(ctx, t) {
   const wA = ctx.measureText('needs a pair').width;
   const wDot = ctx.measureText('.').width;
   ctx.restore();
-  const dotX = W / 2 - (wA + wDot) / 2 + wA + wDot / 2 + 4;
-  const dotY = 650 - HOOK_SIZE * 0.085;
-  const dotR = HOOK_SIZE * 0.085;
+  const dotX = W / 2 - (wA + wDot) / 2 + wA + wDot / 2 + 6;
+  const dotY = 650 - HOOK_SIZE * 0.09;
+  const dotR = HOOK_SIZE * 0.09;
 
   const zk = seg(t, 1.55, 2.0);
   const s = DOT_ZOOM ** easeIn3(zk);
@@ -414,16 +507,14 @@ function sceneHook(ctx, t) {
   const x = lerp(W / 2, dotX, move);
   const y = lerp(H / 2, dotY, move);
   const r = dotR * spring(t, 0.05, 3.0, 0.6) * (1 + 0.35 * bump(t, 0.5, 0.25));
-  ctx.fillStyle = P.accent;
-  circle(ctx, x, y, r);
-  ctx.fill();
+  orb(ctx, x, y, r);
   ctx.restore();
 }
 
 // S2 + S3: the token trades against ETH, then ETH gets dropped.
 const PAIR_Y = 500, COIN_R = 118;
 function sceneGasCoin(ctx, t) {
-  const tokR0 = HOOK_SIZE * 0.085 * DOT_ZOOM;
+  const tokR0 = HOOK_SIZE * 0.09 * DOT_ZOOM;
   const tx = keys(t, [[2, W / 2], [2.0, 640], [5.0, W / 2]], 2.0, 0.85);
   const ty = keys(t, [[2, H / 2], [2.0, PAIR_Y], [5.0, H / 2]], 2.0, 0.85);
   let tr = keys(t, [[2, tokR0], [2.0, COIN_R], [5.0, 130]], 2.0, 0.85);
@@ -445,7 +536,7 @@ function sceneGasCoin(ctx, t) {
     const b = ex - COIN_R - 12;
     const mid = (a + b) / 2;
     ctx.save();
-    ctx.strokeStyle = t >= 4.5 ? P.red : 'rgba(242,243,238,0.35)';
+    ctx.strokeStyle = t >= 4.5 ? P.red : 'rgba(245,245,247,0.35)';
     ctx.globalAlpha = 1 - snap;
     ctx.lineWidth = 3;
     ctx.setLineDash([10, 10]);
@@ -459,7 +550,7 @@ function sceneGasCoin(ctx, t) {
     }
     ctx.stroke();
     ctx.restore();
-    txt(ctx, 'ORBIT / ETH', (a + b) / 2, PAIR_Y - 24, { size: 22, fam: MONO, color: P.muted, align: 'center', alpha: link * (1 - seg(t, 4.3, 4.5)), ls: 1 });
+    txt(ctx, 'ORBIT / ETH', (a + b) / 2, PAIR_Y - 24, { size: 20, fam: MONO, color: P.muted, align: 'center', alpha: link * (1 - seg(t, 4.3, 4.5)), ls: 1 });
   }
 
   // volatile price chart
@@ -489,7 +580,7 @@ function sceneGasCoin(ctx, t) {
       circle(ctx, hx, hy, 7);
       ctx.fill();
       const pct = ((pts[pts.length - 1][1] - pts[0][1]) / 62) * -22;
-      txt(ctx, `${pct >= 0 ? '+' : ''}${pct.toFixed(1)}%`, hx + 18, hy + 8, { size: 26, weight: 700, fam: MONO, color: P.red });
+      txt(ctx, `${pct >= 0 ? '+' : ''}${pct.toFixed(1)}%`, hx + 18, hy + 8, { size: 24, weight: 700, fam: MONO, color: P.red });
     }
     txt(ctx, 'ORBIT / ETH  1H', x0, 708, { size: 18, fam: MONO, color: P.muted, ls: 1 });
     ctx.restore();
@@ -505,35 +596,35 @@ function sceneGasCoin(ctx, t) {
     circle(ctx, 0, 0, COIN_R);
     ctx.fill();
     ctx.lineWidth = 2;
-    ctx.strokeStyle = 'rgba(255,255,255,0.14)';
+    ctx.strokeStyle = P.lineStrong;
     ctx.stroke();
-    txt(ctx, 'ETH', 0, 12, { size: 38, weight: 700, fam: MONO, color: P.ink, align: 'center' });
+    txt(ctx, 'ETH', 0, 12, { size: 36, weight: 700, fam: MONO, color: P.ink, align: 'center' });
     ctx.restore();
   }
 
-  // token (lime) body
-  ctx.save();
+  // token orb; from 5.75 it grows into the purple wipe
+  if (t >= 5.75) tr = lerp(tr, 1250, easeIn3(seg(t, 5.75, 6.0)));
   if (t >= 5.75) {
-    // grows into the lime wipe
-    tr = lerp(tr, 1250, easeIn3(seg(t, 5.75, 6.0)));
+    ctx.fillStyle = P.accent;
+    circle(ctx, tx, ty, tr);
+    ctx.fill();
+    orb(ctx, tx, ty, tr, 1 - seg(t, 5.75, 5.9));
+  } else {
+    orb(ctx, tx, ty, tr);
   }
-  ctx.fillStyle = P.accent;
-  circle(ctx, tx, ty, tr);
-  ctx.fill();
   const la = seg(t, 2.12, 2.35) * (1 - seg(t, 5.75, 5.85));
-  if (la > 0) txt(ctx, '$ORBIT', tx, ty + 12, { size: 34 * (tr / COIN_R) ** 0.35, weight: 700, fam: MONO, color: P.accentInk, align: 'center', alpha: la });
-  ctx.restore();
+  if (la > 0) txt(ctx, '$ORBIT', tx, ty + 11, { size: 32 * (tr / COIN_R) ** 0.35, weight: 700, fam: MONO, color: P.ink, align: 'center', alpha: la });
 
   // headlines
   words(ctx, t, { parts: [['Most tokens pair with a ', P.ink], ['gas coin.', P.red]], x: W / 2, y: 230, size: 80, weight: 600, t0: 2.35, stagger: 0.05, out: 3.82 });
-  const hb = words(ctx, t, { parts: [['Stop launching against ', P.ink], ['ETH.', P.red]], x: W / 2, y: 250, size: 112, weight: 700, t0: 4.0, stagger: 0.07, out: 5.5 });
+  const hb = words(ctx, t, { parts: [['Stop launching against ', P.ink], ['ETH.', P.red]], x: W / 2, y: 250, size: 108, weight: 700, t0: 4.0, stagger: 0.07, out: 5.5 });
   const strike = easeOut3(seg(t, 4.45, 4.62)) * (1 - seg(t, 5.5, 5.68));
   if (strike > 0) {
     const eth = hb.toks[hb.toks.length - 1];
     const sx = hb.x0 + eth.x - 8;
     const ew = eth.width + 16;
     ctx.fillStyle = P.ink;
-    ctx.fillRect(sx, 250 - 112 * 0.36, ew * strike, 10);
+    ctx.fillRect(sx, 250 - 108 * 0.34, ew * strike, 10);
   }
 }
 
@@ -544,12 +635,12 @@ function sceneCompanies(ctx, t) {
   camera(ctx, W / 2, H / 2, 1 + push * 0.9);
   ctx.globalAlpha = 1 - push;
   const sc = ctx.createRadialGradient(W / 2, 540, 100, W / 2, 540, 900);
-  sc.addColorStop(0, 'rgba(7,8,10,0.85)');
-  sc.addColorStop(1, 'rgba(7,8,10,0)');
+  sc.addColorStop(0, 'rgba(5,5,5,0.85)');
+  sc.addColorStop(1, 'rgba(5,5,5,0)');
   ctx.fillStyle = sc;
   ctx.fillRect(0, 0, W, H);
-  words(ctx, t, { parts: [['Start launching against the companies', P.ink]], x: W / 2, y: 450, size: 96, weight: 700, t0: 6.05, stagger: 0.065 });
-  words(ctx, t, { parts: [['that actually ', P.ink], ['print money.', P.accent]], x: W / 2, y: 574, size: 96, weight: 700, t0: 6.45, stagger: 0.08 });
+  words(ctx, t, { parts: [['Start launching against the companies', P.ink]], x: W / 2, y: 450, size: 92, weight: 700, t0: 6.05, stagger: 0.065 });
+  words(ctx, t, { parts: [['that actually ', P.ink], ['print money.', P.accent]], x: W / 2, y: 572, size: 92, weight: 700, t0: 6.45, stagger: 0.08 });
 
   const picks = ['NVDA', 'TSLA', 'AAPL', 'SPY'];
   const pw = 190, gap = 24;
@@ -564,16 +655,18 @@ function sceneCompanies(ctx, t) {
     ctx.fillStyle = P.panel2;
     rr(ctx, -pw / 2, -38, pw, 76, 38);
     ctx.fill();
-    ctx.strokeStyle = 'rgba(198,255,74,0.55)';
+    ctx.fillStyle = A(0.14);
+    ctx.fill();
+    ctx.strokeStyle = A(0.6);
     ctx.lineWidth = 2;
     ctx.stroke();
-    txt(ctx, tk, 0, 11, { size: 32, weight: 700, fam: MONO, color: P.ink, align: 'center' });
+    txt(ctx, tk, 0, 11, { size: 30, weight: 700, fam: MONO, color: P.ink, align: 'center' });
     ctx.restore();
   });
   ctx.restore();
 }
 
-// Lime wipe: a lime disc covers the frame (end of S3), then a dark disc
+// Purple wipe: the orb covers the frame (end of S3), then a dark disc
 // opens from the center revealing S4.
 function wipe(ctx, t) {
   const k = easeOut3(seg(t, 6.0, 6.32));
@@ -587,18 +680,34 @@ function wipe(ctx, t) {
   ctx.restore();
 }
 
-// S5: PAIR wordmark.
-function wordmark(ctx, t, t0, y, size) {
+// PAIR lockup: the logo (crescent + orb) beside the wordmark, as in the site header.
+function lockup(ctx, t, t0, cy, size) {
   const k = seg(t, t0, t0 + 0.75);
-  const tracking = lerp(size * 0.28, -size * 0.02, easeOutExpo(k));
-  const sc = lerp(1.22, 1, spring(t, t0, 2.4, 0.72));
+  const tracking = lerp(size * 0.3, size * 0.01, easeOutExpo(k));
+  const sc = lerp(1.2, 1, spring(t, t0, 2.4, 0.72));
   const blur = 18 * (1 - seg(t, t0, t0 + 0.16));
+  const logoH = size * 0.95;
+  const logoW = logoH * (459 / 512);
   ctx.save();
-  ctx.translate(W / 2, y);
+  ctx.font = font(700, size);
+  ctx.letterSpacing = '0px';
+  const textW = [...'PAIR'].reduce((a, c) => a + ctx.measureText(c).width, 0) + size * 0.01 * 3;
+  ctx.restore();
+  const gap = size * 0.18;
+  const total = logoW + gap + textW;
+  ctx.save();
+  ctx.translate(W / 2, cy);
   ctx.scale(sc, sc);
   if (blur > 0.4) ctx.filter = `blur(${blur.toFixed(1)}px)`;
   ctx.globalAlpha *= clamp((t - t0) / 0.06);
-  tracked(ctx, 'PAIR', 0, 0, { size, weight: 800, color: P.ink, tracking });
+  // the logo rolls in, the wordmark tracks in
+  const lk = spring(t, t0, 2.2, 0.75);
+  ctx.save();
+  ctx.translate(-total / 2 + logoW / 2, -size * 0.34);
+  ctx.rotate((1 - lk) * -0.6);
+  img(ctx, 'logo', -logoW / 2, -logoH / 2, logoW, logoH);
+  ctx.restore();
+  tracked(ctx, 'PAIR', -total / 2 + logoW + gap, 0, { size, weight: 700, color: P.ink, tracking, align: 'left' });
   ctx.restore();
 }
 
@@ -607,11 +716,11 @@ function sceneBrand(ctx, t) {
   ctx.save();
   ctx.translate(0, -140 * out);
   ctx.globalAlpha = 1 - out;
-  wordmark(ctx, t, 8.0, 545, 280);
-  words(ctx, t, { parts: [['Launch tokens paired with ', P.ink], ['tokenized stocks.', P.accent]], x: W / 2, y: 660, size: 48, weight: 500, t0: 8.55, stagger: 0.05 });
-  const label = 'THE FIRST MULTIPOOL LAUNCHPAD ON ROBINHOOD CHAIN';
+  lockup(ctx, t, 8.0, 560, 250);
+  words(ctx, t, { parts: [['Launch tokens paired with ', P.ink], ['tokenized stocks.', P.accent]], x: W / 2, y: 690, size: 50, weight: 500, t0: 8.55, stagger: 0.05 });
+  const label = 'THE MULTIPOOL LAUNCHPAD ON ROBINHOOD CHAIN';
   const vis = Math.floor(seg(t, 9.0, 9.45) * label.length);
-  if (vis > 0) tracked(ctx, label, W / 2, 752, { size: 22, weight: 500, fam: MONO, color: P.muted, tracking: 5, visible: vis });
+  if (vis > 0) tracked(ctx, label, W / 2, 782, { size: 22, weight: 400, fam: MONO, color: P.muted, tracking: 4, visible: vis });
   ctx.restore();
 }
 
@@ -619,7 +728,7 @@ function sceneBrand(ctx, t) {
 const PX = 380, PY = 170, PW = 1160, PH = 740;
 const FIELD_Y = 296, FIELD_H = 90;
 const GRID_X = 428, GRID_Y = 486, CHIP_W = 122, CHIP_H = 62, CHIP_GAP = 12;
-const BTN = { x: 1192, y: 790, w: 300, h: 84, r: 20 };
+const BTN = { x: 1172, y: 790, w: 320, h: 84, r: 42 };
 const chipPos = (i) => ({ x: GRID_X + (i % 8) * (CHIP_W + CHIP_GAP), y: GRID_Y + Math.floor(i / 8) * (CHIP_H + CHIP_GAP) });
 const chipCenter = (tk) => {
   const p = chipPos(TICKERS.indexOf(tk));
@@ -647,21 +756,21 @@ function cameraLaunch(t) {
   };
 }
 
-function field(ctx, t, x, y, w, label, value, focused, caretOn) {
-  ctx.fillStyle = P.panel2;
+function field(ctx, x, y, w, label, value, focused, caretOn) {
+  ctx.fillStyle = P.panel;
   rr(ctx, x, y, w, FIELD_H, 16);
   ctx.fill();
   ctx.lineWidth = 2;
-  ctx.strokeStyle = focused > 0 ? `rgba(198,255,74,${0.25 + 0.6 * focused})` : P.line;
+  ctx.strokeStyle = focused > 0 ? A(0.3 + 0.6 * focused) : P.line;
   ctx.stroke();
-  txt(ctx, label, x + 24, y + 30, { size: 14, weight: 500, fam: MONO, color: P.muted, ls: 2 });
+  txt(ctx, label, x + 24, y + 30, { size: 14, weight: 400, fam: MONO, color: P.muted, ls: 2 });
   txt(ctx, value, x + 24, y + 72, { size: 30, weight: 600, color: P.ink });
   if (caretOn) {
     ctx.save();
     ctx.font = font(600, 30);
     const cw = ctx.measureText(value).width;
     ctx.restore();
-    ctx.fillStyle = P.accent;
+    ctx.fillStyle = P.accentHi;
     ctx.fillRect(x + 26 + cw, y + 46, 3, 34);
   }
 }
@@ -681,47 +790,39 @@ function scenePanel(ctx, t) {
   // panel chrome and contents fade together; the Launch button survives
   ctx.save();
   ctx.globalAlpha = 1 - fadeOut;
-  ctx.shadowColor = 'rgba(0,0,0,0.55)';
-  ctx.shadowBlur = 60;
-  ctx.shadowOffsetY = 20;
-  ctx.fillStyle = P.panel;
-  rr(ctx, PX, PY, PW, PH, 28);
-  ctx.fill();
-  ctx.shadowColor = 'transparent';
-  ctx.strokeStyle = 'rgba(255,255,255,0.09)';
-  ctx.lineWidth = 2;
-  ctx.stroke();
+  glass(ctx, PX, PY, PW, PH, 32, { glow: 0.16 });
 
-  txt(ctx, 'Launch a token', PX + 48, PY + 70, { size: 34, weight: 600 });
-  ctx.fillStyle = P.accent;
-  circle(ctx, PX + PW - 48 - 224, PY + 58, 5);
+  txt(ctx, 'Launch token', PX + 48, PY + 70, { size: 36, weight: 600 });
+  ctx.fillStyle = P.green;
+  circle(ctx, PX + PW - 48 - 236, PY + 58, 5);
   ctx.fill();
-  txt(ctx, 'ROBINHOOD CHAIN', PX + PW - 48, PY + 64, { size: 16, fam: MONO, color: P.muted, align: 'right', ls: 2 });
+  txt(ctx, 'ROBINHOOD CHAIN', PX + PW - 48, PY + 64, { size: 16, weight: 400, fam: MONO, color: P.muted, align: 'right', ls: 2 });
 
   const nName = clamp(Math.floor((t - NAME_T0) / NAME_STEP) + 1, 0, NAME.length);
   const nTick = clamp(Math.floor((t - TICK_T0) / TICK_STEP) + 1, 0, TICK.length);
   const blink = Math.floor(t * 4) % 2 === 0;
   const fName = seg(t, 10.12, 10.2) * (1 - seg(t, 10.78, 10.86));
   const fTick = seg(t, 10.78, 10.86) * (1 - seg(t, 11.4, 11.5));
-  field(ctx, t, PX + 48, FIELD_Y, 520, 'NAME', NAME.slice(0, nName), fName, fName > 0.5 && (blink || nName < NAME.length));
-  field(ctx, t, PX + 592, FIELD_Y, 520, 'TICKER', TICK.slice(0, nTick), fTick, fTick > 0.5 && (blink || nTick < TICK.length));
+  field(ctx, PX + 48, FIELD_Y, 520, 'NAME', NAME.slice(0, nName), fName, fName > 0.5 && (blink || nName < NAME.length));
+  field(ctx, PX + 592, FIELD_Y, 520, 'SYMBOL', TICK.slice(0, nTick), fTick, fTick > 0.5 && (blink || nTick < TICK.length));
 
   const sel = selectedAt(t);
-  txt(ctx, 'Pair with stock tokens', PX + 48, GRID_Y - 28, { size: 24, weight: 600 });
+  txt(ctx, 'Paired markets', PX + 48, GRID_Y - 28, { size: 24, weight: 600 });
   const cnt = sel.length;
   ctx.save();
-  ctx.font = font(500, 18, MONO);
+  ctx.font = font(400, 18, MONO);
   ctx.letterSpacing = '1px';
   const tail = ' / 5 SELECTED';
   const tw = ctx.measureText(tail).width;
   ctx.textAlign = 'right';
   ctx.fillStyle = P.muted;
   ctx.fillText(tail, PX + PW - 48, GRID_Y - 30);
-  ctx.fillStyle = cnt ? P.accent : P.muted;
+  ctx.fillStyle = cnt ? P.accentHi : P.muted;
   const lastPick = sel.length ? sel[sel.length - 1].t : 0;
   const pop = 1 + 0.35 * bump(t, lastPick, 0.2);
   ctx.translate(PX + PW - 48 - tw, GRID_Y - 30);
   ctx.scale(pop, pop);
+  ctx.font = font(700, 18, MONO);
   ctx.fillText(String(cnt), 0, 0);
   ctx.restore();
 
@@ -740,27 +841,29 @@ function scenePanel(ctx, t) {
     ctx.fill();
     if (on > 0.01) {
       ctx.globalAlpha = (1 - fadeOut) * clamp(on);
-      ctx.fillStyle = P.accent;
+      ctx.fillStyle = A(0.3);
       ctx.fill();
+      ctx.strokeStyle = P.accent;
+      ctx.lineWidth = 2;
+      ctx.stroke();
       ctx.globalAlpha = 1 - fadeOut;
-    }
-    if (on <= 0.01) {
+    } else {
       ctx.strokeStyle = P.line;
       ctx.lineWidth = 1.5;
       ctx.stroke();
     }
-    txt(ctx, tk, 0, 8, { size: 21, weight: on > 0.5 ? 700 : 500, fam: MONO, color: on > 0.5 ? P.accentInk : P.muted, align: 'center' });
+    txt(ctx, tk, 0, 8, { size: 20, weight: on > 0.5 ? 700 : 400, fam: MONO, color: on > 0.5 ? P.ink : P.muted, align: 'center' });
     ctx.restore();
   });
 
-  // basket preview: one pill per pool that the launch will create
-  txt(ctx, 'POOLS', PX + 48, BTN.y - 6, { size: 14, fam: MONO, color: P.muted, ls: 2 });
+  // one pill per market the launch will create, with its allocation
+  txt(ctx, 'ALLOCATION', PX + 48, BTN.y - 6, { size: 14, weight: 400, fam: MONO, color: P.muted, ls: 2 });
   let bx = PX + 48;
   sel.forEach((p) => {
     const k = spring(t, p.t + 0.05, 2.6, 0.75);
-    const label = `ORBIT / ${p.tk}`;
+    const label = `${p.tk} ${p.w}%`;
     ctx.save();
-    ctx.font = font(500, 18, MONO);
+    ctx.font = font(400, 18, MONO);
     const w = ctx.measureText(label).width + 36;
     ctx.restore();
     ctx.save();
@@ -769,14 +872,15 @@ function scenePanel(ctx, t) {
     ctx.fillStyle = P.panel2;
     rr(ctx, 0, 0, w, 46, 23);
     ctx.fill();
-    ctx.strokeStyle = 'rgba(198,255,74,0.4)';
+    ctx.strokeStyle = A(0.5);
     ctx.lineWidth = 1.5;
     ctx.stroke();
-    txt(ctx, label, 18, 30, { size: 18, fam: MONO, color: P.ink });
+    txt(ctx, label, 18, 30, { size: 18, fam: MONO, weight: 400, color: P.ink });
     ctx.restore();
     bx += w + 12;
   });
-  txt(ctx, `${cnt} locked Uniswap v4 pool${cnt === 1 ? '' : 's'}  ·  1% swap fee`, PX + 48, BTN.y + 104, { size: 16, fam: MONO, color: P.muted, ls: 1 });
+  const total = sel.reduce((a, p) => a + p.w, 0);
+  txt(ctx, `${cnt} market${cnt === 1 ? '' : 's'}  ·  ${total}% allocated  ·  one transaction`, PX + 48, BTN.y + 104, { size: 16, weight: 400, fam: MONO, color: P.muted, ls: 1 });
   ctx.restore();
 
   // cursor
@@ -788,11 +892,12 @@ function scenePanel(ctx, t) {
   cursor(ctx, cx, cy, { scale: 1 / cam.s, alpha: ca, press });
   ctx.restore();
 
-  // The Launch button morphs into the token disc. It is drawn in screen space
+  // The Launch button morphs into the token orb. It is drawn in screen space
   // so the morph lands on the cluster center whatever the camera is doing.
   launchButton(ctx, t, cam, (1 - enter) * 760);
 }
 
+const CL_S = 1.2;
 function launchButton(ctx, t, cam, offY) {
   if (t >= 14.75) return; // handed over to sceneCluster
   const m = spring(t, 14.08, 2.0, 0.86);
@@ -811,46 +916,47 @@ function launchButton(ctx, t, cam, offY) {
   const sc = k * (1 - 0.06 * press);
   ctx.scale(sc, sc);
   if (hover > 0 && m < 0.5) {
-    ctx.shadowColor = 'rgba(198,255,74,0.45)';
-    ctx.shadowBlur = 40 * hover;
+    ctx.shadowColor = A(0.6);
+    ctx.shadowBlur = 44 * hover;
   }
-  ctx.fillStyle = P.accent;
+  ctx.fillStyle = purpleFill(ctx, -h / 2, h);
   rr(ctx, -w / 2, -h / 2, w, h, r);
   ctx.fill();
   ctx.shadowColor = 'transparent';
+  // as it becomes a circle it turns into the orb
+  if (m > 0.5) orb(ctx, 0, 0, r, seg(m, 0.5, 1));
   const la = 1 - seg(t, 14.02, 14.12);
-  if (la > 0) txt(ctx, 'Launch', 0, 10, { size: 28, weight: 600, color: P.accentInk, align: 'center', alpha: la });
+  if (la > 0) txt(ctx, 'Launch token', 0, 10, { size: 28, weight: 700, fam: MONO, color: P.accentInk, align: 'center', alpha: la });
   // spinner, then check, then the ticker
   const sp = seg(t, 14.2, 14.28) * (1 - seg(t, 14.55, 14.62));
   if (sp > 0) {
     ctx.save();
     ctx.globalAlpha *= sp;
-    ctx.strokeStyle = P.accentInk;
+    ctx.strokeStyle = P.ink;
     ctx.lineWidth = 6;
     ctx.lineCap = 'round';
     const a0 = t * 11;
     ctx.beginPath();
-    ctx.arc(0, 0, 24, a0, a0 + Math.PI * 1.3);
+    ctx.arc(0, 0, 26, a0, a0 + Math.PI * 1.3);
     ctx.stroke();
     ctx.restore();
   }
   const ck = seg(t, 14.6, 14.78);
-  if (ck > 0) check(ctx, 0, 0, 1.1 * CL_S, ck, P.accentInk, 7);
+  if (ck > 0) check(ctx, 0, 0, 1.1 * CL_S, ck, P.ink, 7);
   ctx.restore();
 }
 
-// ---------------------------------------------------------------- pool cluster (S7 to S9)
+// ---------------------------------------------------------------- market cluster (S7 to S9)
 const NODES = [
-  { tk: 'NVDA', dx: -360, dy: -210 },
-  { tk: 'TSLA', dx: 360, dy: -210 },
-  { tk: 'AAPL', dx: -360, dy: 210 },
-  { tk: 'SPY', dx: 360, dy: 210 },
+  { tk: 'NVDA', w: 40, dx: -360, dy: -210 },
+  { tk: 'TSLA', w: 25, dx: 360, dy: -210 },
+  { tk: 'AAPL', w: 20, dx: -360, dy: 210 },
+  { tk: 'SPY', w: 15, dx: 360, dy: 210 },
 ];
 
-const CL_S = 1.2;
 function clusterXform(t) {
   return {
-    x: keys(t, [[14, W / 2], [16.0, 570], [18.0, W / 2]], 1.7, 0.9),
+    x: keys(t, [[14, W / 2], [16.0, 540], [18.0, W / 2]], 1.7, 0.9),
     y: keys(t, [[14, 560], [16.0, 560], [18.0, 500]], 1.7, 0.9),
     s: keys(t, [[14, CL_S], [16.0, 0.86], [18.0, 0.7], [19.9, 0.4]], 1.7, 0.9),
     a: 1 - seg(t, 19.88, 20.1),
@@ -872,16 +978,16 @@ function sceneCluster(ctx, t) {
     const nx = n.dx * k, ny = n.dy * k;
     const len = Math.hypot(nx, ny);
     const ux = nx / (len || 1), uy = ny / (len || 1);
-    // pool line
+    // market line
     ctx.save();
-    ctx.strokeStyle = 'rgba(242,243,238,0.28)';
+    ctx.strokeStyle = 'rgba(245,245,247,0.26)';
     ctx.lineWidth = 3;
     ctx.beginPath();
     ctx.moveTo(ux * (tokR + 10), uy * (tokR + 10));
     ctx.lineTo(nx - ux * 72, ny - uy * 72);
     ctx.stroke();
     ctx.restore();
-    // trades flowing through the pool
+    // trades flowing through each pool
     const flow = seg(t, 15.6, 15.9);
     if (flow > 0 && len > 200) {
       for (let j = 0; j < 3; j++) {
@@ -889,14 +995,14 @@ function sceneCluster(ctx, t) {
         const dir = (i + j) % 2 ? u : 1 - u;
         const px = lerp(ux * (tokR + 14), nx - ux * 76, dir);
         const py = lerp(uy * (tokR + 14), ny - uy * 76, dir);
-        ctx.fillStyle = P.accent;
+        ctx.fillStyle = P.accentHi;
         ctx.globalAlpha = X.a * flow * Math.sin(Math.PI * u) * 0.9;
         circle(ctx, px, py, 5);
         ctx.fill();
       }
       ctx.globalAlpha = X.a;
     }
-    // lock
+    // pool badge
     const lk = spring(t, 15.5 + i * 0.06, 3.2, 0.6);
     if (lk > 0) {
       const mx = (ux * (tokR + 10) + nx - ux * 72) / 2;
@@ -907,65 +1013,57 @@ function sceneCluster(ctx, t) {
       ctx.fillStyle = P.bg;
       circle(ctx, 0, 0, 26);
       ctx.fill();
-      ctx.strokeStyle = 'rgba(198,255,74,0.6)';
+      ctx.strokeStyle = A(0.7);
       ctx.lineWidth = 2;
       ctx.stroke();
-      lockIcon(ctx, 0, 1, 1, P.accent);
+      dropIcon(ctx, 0, 1, 1, P.accentHi);
       ctx.restore();
     }
-    // stock node
+    // stock node with its allocation
     ctx.save();
     ctx.translate(nx, ny);
     ctx.fillStyle = P.panel2;
     circle(ctx, 0, 0, 68);
     ctx.fill();
-    ctx.strokeStyle = 'rgba(255,255,255,0.2)';
+    ctx.strokeStyle = P.lineStrong;
     ctx.lineWidth = 2;
     ctx.stroke();
-    txt(ctx, n.tk, 0, 9, { size: 26, weight: 700, fam: MONO, color: P.ink, align: 'center' });
+    txt(ctx, n.tk, 0, 4, { size: 26, weight: 700, fam: MONO, color: P.ink, align: 'center' });
+    txt(ctx, `${n.w}%`, 0, 32, { size: 18, weight: 400, fam: MONO, color: P.accentHi, align: 'center' });
     ctx.restore();
   });
   ctx.restore();
 
-  // The token disc itself is the Launch button (drawn by launchButton) until
-  // the panel scene ends; after that we draw it here in the cluster frame.
-  if (t >= 14.75) {
-    ctx.save();
-    ctx.globalAlpha = X.a;
-    ctx.translate(X.x, X.y);
-    ctx.scale(X.s, X.s);
-    const grow = spring(t, 14.75, 2.4, 0.75);
-    const r = lerp(48, tokR, grow);
-    ctx.fillStyle = P.accent;
-    circle(ctx, 0, 0, r);
-    ctx.fill();
-    const lab = seg(t, 14.82, 14.98);
-    if (lab > 0) txt(ctx, '$ORBIT', 0, 11, { size: 32, weight: 700, fam: MONO, color: P.accentInk, align: 'center', alpha: lab });
-    const ck = seg(t, 14.6, 14.78) * (1 - seg(t, 14.8, 14.9));
-    if (ck > 0) check(ctx, 0, 0, 1.1, seg(t, 14.6, 14.78), P.accentInk, 7);
-    ctx.restore();
-  }
+  // The token orb itself: the Launch button (drawn by launchButton) until 14.75.
+  ctx.save();
+  ctx.globalAlpha = X.a;
+  ctx.translate(X.x, X.y);
+  ctx.scale(X.s, X.s);
+  const grow = spring(t, 14.75, 2.4, 0.75);
+  orb(ctx, 0, 0, lerp(48, tokR, grow));
+  const lab = seg(t, 14.82, 14.98);
+  if (lab > 0) txt(ctx, '$ORBIT', 0, 11, { size: 30, weight: 700, fam: MONO, color: P.ink, align: 'center', alpha: lab });
+  const ck = seg(t, 14.6, 14.78) * (1 - seg(t, 14.8, 14.9));
+  if (ck > 0) check(ctx, 0, 0, 1.1, 1, P.ink, 7);
+  ctx.restore();
 }
 
 function sceneLaunchCopy(ctx, t) {
-  words(ctx, t, { parts: [['One transaction. ', P.ink], ['Four pools.', P.accent]], x: W / 2, y: 160, size: 80, weight: 700, t0: 14.72, stagger: 0.06, out: 15.86 });
-  words(ctx, t, { parts: [['Liquidity locked in Uniswap v4. ', P.muted], ['Forever.', P.ink]], x: W / 2, y: 1000, size: 38, weight: 500, t0: 15.5, stagger: 0.04, out: 15.9 });
+  words(ctx, t, { parts: [['One transaction. ', P.ink], ['Four markets.', P.accent]], x: W / 2, y: 160, size: 80, weight: 700, t0: 14.72, stagger: 0.06, out: 15.86 });
+  words(ctx, t, { parts: [['Every paired asset gets ', P.muted], ['its own pool.', P.ink]], x: W / 2, y: 1000, size: 38, weight: 500, t0: 15.5, stagger: 0.04, out: 15.9 });
 }
 
 // S8
 function sceneNoCurve(ctx, t) {
   const L = [
     { parts: [['No ', P.muted], ['bonding curve.', P.ink]], y: 430, t0: 16.0, out: 17.8 },
-    { parts: [['No ', P.muted], ['price ceiling.', P.ink]], y: 570, t0: 16.5, out: 17.84 },
-    { parts: [['No ', P.muted], ['migration.', P.ink]], y: 710, t0: 17.0, out: 17.88 },
+    { parts: [['No ', P.muted], ['migration.', P.ink]], y: 570, t0: 16.5, out: 17.84 },
+    { parts: [['Liquidity ', P.ink], ['never moves.', P.accent]], y: 710, t0: 17.0, out: 17.88 },
   ];
   L.forEach((l) => {
-    words(ctx, t, { ...l, x: 1060, align: 'left', size: 84, weight: 700, stagger: 0.06 });
+    words(ctx, t, { ...l, x: 1010, align: 'left', size: 76, weight: 700, stagger: 0.06 });
     const k = spring(t, l.t0, 3, 0.7) * (1 - seg(t, l.out, l.out + 0.2));
-    if (k > 0) {
-      ctx.fillStyle = P.accent;
-      ctx.fillRect(1020, l.y - 42, 12 * k, 12 * k);
-    }
+    if (k > 0) orb(ctx, 978, l.y - 27, 9 * k);
   });
 }
 
@@ -981,7 +1079,6 @@ function sceneTimeline(ctx, t) {
   const y = 850;
   ctx.save();
   ctx.globalAlpha = inK;
-  // axis with minor ticks
   ctx.strokeStyle = 'rgba(255,255,255,0.22)';
   ctx.lineWidth = 2;
   ctx.beginPath();
@@ -1000,15 +1097,14 @@ function sceneTimeline(ctx, t) {
     const a = clamp(1 - d / 900);
     if (a <= 0) return;
     const near = clamp(1 - d / 120);
-    ctx.fillStyle = near > 0.5 ? P.accent : 'rgba(255,255,255,0.45)';
+    ctx.fillStyle = near > 0.5 ? P.accentHi : 'rgba(255,255,255,0.45)';
     circle(ctx, x, y, 5 + 3 * near);
     ctx.fill();
-    txt(ctx, s, x, y + 62, { size: 30, weight: near > 0.5 ? 700 : 500, fam: MONO, color: near > 0.5 ? P.ink : P.muted, align: 'center', alpha: a, ls: 2 });
+    txt(ctx, s, x, y + 62, { size: 28, weight: near > 0.5 ? 700 : 400, fam: MONO, color: near > 0.5 ? P.ink : P.muted, align: 'center', alpha: a, ls: 2 });
   });
-  // marker from the pool to the axis
   const X = clusterXform(t);
   const top = X.y + 300 * X.s;
-  ctx.strokeStyle = P.accent;
+  ctx.strokeStyle = P.accentHi;
   ctx.setLineDash([6, 8]);
   ctx.lineWidth = 2;
   ctx.beginPath();
@@ -1016,59 +1112,99 @@ function sceneTimeline(ctx, t) {
   ctx.lineTo(W / 2, y - 16);
   ctx.stroke();
   ctx.setLineDash([]);
-  txt(ctx, 'SAME POOL  ·  NEVER MIGRATES', W / 2 + 22, (top + y) / 2 + 7, { size: 18, fam: MONO, color: P.muted, ls: 2 });
+  txt(ctx, 'SAME POOL  ·  NEVER MIGRATES', W / 2 + 22, (top + y) / 2 + 7, { size: 17, weight: 400, fam: MONO, color: P.muted, ls: 2 });
   ctx.restore();
 }
 
-// S10: fees
+// S10: fee policies (Launch V2 and Infinity policy modes, pair.fund/docs)
+const FEES = [
+  { title: 'Creator fees', sub: "to the creator's wallet", icon: 'wallet' },
+  { title: 'Fee sharing', sub: 'split across wallets', icon: 'split' },
+  { title: 'Buyback & burn', sub: 'buys and burns the token', icon: 'flame' },
+  { title: 'Holder distribution', sub: 'reserved for holders', icon: 'holders' },
+];
+function feeIcon(ctx, kind, x, y, color) {
+  ctx.save();
+  ctx.translate(x, y);
+  ctx.strokeStyle = color;
+  ctx.fillStyle = color;
+  ctx.lineWidth = 3;
+  ctx.lineJoin = 'round';
+  ctx.lineCap = 'round';
+  if (kind === 'wallet') {
+    rr(ctx, -16, -12, 32, 24, 5);
+    ctx.stroke();
+    circle(ctx, 8, 0, 3);
+    ctx.fill();
+  } else if (kind === 'split') {
+    ctx.beginPath();
+    ctx.moveTo(-16, 0); ctx.lineTo(-2, 0); ctx.lineTo(14, -12);
+    ctx.moveTo(-2, 0); ctx.lineTo(14, 12);
+    ctx.stroke();
+  } else if (kind === 'flame') {
+    ctx.beginPath();
+    ctx.moveTo(0, -16);
+    ctx.bezierCurveTo(12, -4, 12, 6, 10, 10);
+    ctx.arc(0, 8, 10, 0.2, Math.PI - 0.2);
+    ctx.bezierCurveTo(-12, 6, -8, -4, 0, -16);
+    ctx.stroke();
+  } else {
+    [-11, 0, 11].forEach((dx, i) => {
+      circle(ctx, dx, -6 + (i === 1 ? -3 : 0), 5);
+      ctx.stroke();
+    });
+    ctx.beginPath();
+    ctx.moveTo(-18, 12); ctx.lineTo(18, 12);
+    ctx.stroke();
+  }
+  ctx.restore();
+}
 function sceneFees(ctx, t) {
   const out = easeIn3(seg(t, 21.85, 22.1));
   if (t < 19.95 || out >= 1) return;
   ctx.save();
   ctx.globalAlpha = 1 - out;
-  words(ctx, t, { parts: [['1% ', P.accent], ['swap fee on every trade.', P.ink]], x: W / 2, y: 390, size: 86, weight: 700, t0: 20.0, stagger: 0.055 });
-  const bx = 360, by = 500, bw = 1200, bh = 132;
-  const k0 = seg(t, 20.3, 20.45);
-  ctx.globalAlpha = (1 - out) * k0;
-  ctx.fillStyle = P.panel2;
-  rr(ctx, bx, by, bw, bh, 24);
-  ctx.fill();
-  ctx.strokeStyle = P.line;
-  ctx.lineWidth = 2;
-  ctx.stroke();
-  ctx.globalAlpha = 1 - out;
-  const wa = 0.7 * bw * spring(t, 20.5, 1.7, 0.9);
-  const wb = 0.3 * bw * spring(t, 20.75, 1.7, 0.9);
-  const gap = 8;
-  // creator share
-  if (wa > 1) {
+  words(ctx, t, { parts: [['Choose where ', P.ink], ['fees go.', P.accent]], x: W / 2, y: 340, size: 92, weight: 700, t0: 20.0, stagger: 0.06 });
+  const cw = 330, ch = 200, gap = 24;
+  const x0 = W / 2 - (FEES.length * cw + (FEES.length - 1) * gap) / 2;
+  const cy = 470;
+  // highlight rides between cards; its two edges use different springs so it stretches
+  const idxL = FEE_MOVES.slice(1).reduce((a, tm) => a + spring(t, tm, 2.6, 0.8), 0);
+  const idxR = FEE_MOVES.slice(1).reduce((a, tm) => a + spring(t, tm - 0.04, 3.4, 0.8), 0);
+  const hk = spring(t, FEE_MOVES[0], 3, 0.75);
+  FEES.forEach((f, i) => {
+    const k = spring(t, FEE_CARDS_T[i], 2.6, 0.75);
+    if (k <= 0) return;
+    const x = x0 + i * (cw + gap);
+    const on = clamp(1 - Math.abs((idxL + idxR) / 2 - i)) * hk;
     ctx.save();
-    rr(ctx, bx, by, Math.max(0, wa - gap / 2), bh, 24);
-    ctx.fillStyle = P.accent;
+    ctx.globalAlpha *= clamp(k * 1.4);
+    ctx.translate(0, (1 - k) * 60);
+    glass(ctx, x, cy, cw, ch, 24, { shadow: false, glow: 0.1 + 0.2 * on, border: on > 0.5 ? A(0.7) : P.line });
+    ctx.fillStyle = on > 0.5 ? A(0.22) : P.panel2;
+    circle(ctx, x + 56, cy + 58, 30);
     ctx.fill();
-    ctx.clip();
-    const pct = Math.round(70 * clamp(wa / (0.7 * bw)));
-    txt(ctx, `${pct}%`, bx + 36, by + 76, { size: 64, weight: 700, fam: MONO, color: P.accentInk });
-    txt(ctx, 'to the token creator', bx + 36, by + 114, { size: 26, weight: 600, color: P.accentInk });
+    feeIcon(ctx, f.icon, x + 56, cy + 58, on > 0.5 ? P.ink : P.accentHi);
+    txt(ctx, f.title, x + 30, cy + 134, { size: 32, weight: 600, color: P.ink });
+    txt(ctx, f.sub, x + 30, cy + 170, { size: 20, weight: 400, color: P.muted });
+    ctx.restore();
+  });
+  if (hk > 0) {
+    const l = x0 + Math.min(idxL, idxR) * (cw + gap) - 6;
+    const r = x0 + Math.max(idxL, idxR) * (cw + gap) + cw + 6;
+    ctx.save();
+    ctx.strokeStyle = P.accentHi;
+    ctx.lineWidth = 3;
+    ctx.globalAlpha *= clamp(hk);
+    rr(ctx, l, cy - 6, r - l, ch + 12, 30);
+    ctx.stroke();
     ctx.restore();
   }
-  if (wb > 1) {
-    ctx.save();
-    const x = bx + 0.7 * bw + gap / 2;
-    rr(ctx, x, by, Math.max(0, wb - gap / 2), bh, 24);
-    ctx.fillStyle = P.panel3;
-    ctx.fill();
-    ctx.clip();
-    const pct = Math.round(30 * clamp(wb / (0.3 * bw)));
-    txt(ctx, `${pct}%`, x + 32, by + 76, { size: 64, weight: 700, fam: MONO, color: P.ink });
-    txt(ctx, 'protocol treasury', x + 32, by + 114, { size: 26, weight: 500, color: P.muted });
-    ctx.restore();
-  }
-  words(ctx, t, { parts: [['Collected permissionlessly. ', P.muted], ['Claimable per asset.', P.ink]], x: W / 2, y: 740, size: 36, weight: 500, t0: 21.0, stagger: 0.04 });
+  words(ctx, t, { parts: [['Fee policy is enforced ', P.muted], ['on-chain.', P.ink]], x: W / 2, y: 790, size: 40, weight: 500, t0: 21.1, stagger: 0.04 });
   ctx.restore();
 }
 
-// S11: non-custodial
+// S11: non-custodial (copy from pair.fund/docs)
 function sceneCustody(ctx, t) {
   const out = easeIn3(seg(t, 23.85, 24.1));
   if (t < 21.95 || out >= 1) return;
@@ -1080,55 +1216,47 @@ function sceneCustody(ctx, t) {
   const cx = W / 2 - cw / 2, cy = 350 + (1 - k) * 80;
   ctx.globalAlpha = (1 - out) * clamp(k * 1.3);
   const signed = seg(t, SIGN_T + 0.05, SIGN_T + 0.2);
-  ctx.shadowColor = 'rgba(0,0,0,0.55)';
-  ctx.shadowBlur = 50;
-  ctx.shadowOffsetY = 18;
-  ctx.fillStyle = P.panel;
-  rr(ctx, cx, cy, cw, ch, 26);
-  ctx.fill();
-  ctx.shadowColor = 'transparent';
-  ctx.strokeStyle = signed > 0 ? `rgba(198,255,74,${0.2 + 0.5 * signed})` : 'rgba(255,255,255,0.1)';
-  ctx.lineWidth = 2;
-  ctx.stroke();
+  glass(ctx, cx, cy, cw, ch, 32, { glow: 0.14, border: signed > 0 ? A(0.25 + 0.5 * signed) : P.line });
   txt(ctx, 'Signature request', cx + 44, cy + 70, { size: 32, weight: 600 });
-  txt(ctx, 'YOUR WALLET', cx + cw - 44, cy + 66, { size: 17, fam: MONO, color: P.muted, align: 'right', ls: 2 });
-  txt(ctx, 'Launch $ORBIT  ·  4 pools  ·  Robinhood Chain', cx + 44, cy + 128, { size: 23, fam: MONO, color: P.muted });
-  // buttons
+  txt(ctx, 'YOUR WALLET', cx + cw - 44, cy + 66, { size: 16, weight: 400, fam: MONO, color: P.muted, align: 'right', ls: 2 });
+  txt(ctx, 'Launch $ORBIT  ·  4 markets  ·  Robinhood Chain', cx + 44, cy + 128, { size: 21, weight: 400, fam: MONO, color: P.muted });
   const by = cy + 200, bh = 84, bw = (cw - 88 - 20) / 2;
-  ctx.strokeStyle = 'rgba(255,255,255,0.16)';
-  rr(ctx, cx + 44, by, bw, bh, 18);
+  ctx.fillStyle = P.panel2;
+  rr(ctx, cx + 44, by, bw, bh, 42);
+  ctx.fill();
+  ctx.strokeStyle = P.lineStrong;
+  ctx.lineWidth = 1.5;
   ctx.stroke();
-  txt(ctx, 'Reject', cx + 44 + bw / 2, by + 52, { size: 30, weight: 500, color: P.muted, align: 'center' });
+  txt(ctx, 'Reject', cx + 44 + bw / 2, by + 52, { size: 28, weight: 700, fam: MONO, color: P.muted, align: 'center' });
   const sx = cx + 44 + bw + 20;
   const press = bump(t, SIGN_T - 0.05, 0.16);
   ctx.save();
   ctx.translate(sx + bw / 2, by + bh / 2);
   ctx.scale(1 - 0.05 * press, 1 - 0.05 * press);
-  ctx.fillStyle = P.accent;
-  rr(ctx, -bw / 2, -bh / 2, bw, bh, 18);
+  ctx.fillStyle = purpleFill(ctx, -bh / 2, bh);
+  rr(ctx, -bw / 2, -bh / 2, bw, bh, 42);
   ctx.fill();
-  txt(ctx, 'Sign', 0, 11, { size: 30, weight: 600, color: P.accentInk, align: 'center', alpha: 1 - signed });
+  txt(ctx, 'Sign', 0, 10, { size: 28, weight: 700, fam: MONO, color: P.accentInk, align: 'center', alpha: 1 - signed });
   if (signed > 0) {
-    check(ctx, -66, 0, 0.95, seg(t, SIGN_T + 0.05, SIGN_T + 0.25), P.accentInk, 6);
-    txt(ctx, 'Signed', 14, 11, { size: 30, weight: 600, color: P.accentInk, align: 'center', alpha: signed });
+    check(ctx, -70, 0, 0.95, seg(t, SIGN_T + 0.05, SIGN_T + 0.25), P.accentInk, 6);
+    txt(ctx, 'Signed', 14, 10, { size: 28, weight: 700, fam: MONO, color: P.accentInk, align: 'center', alpha: signed });
   }
   ctx.restore();
   ctx.globalAlpha = 1 - out;
-  // cursor
   const cxp = keys(t, [[22, 1500], [22.2, sx + bw / 2 + 24], [23.1, 1480]], 2.1, 0.9);
   const cyp = keys(t, [[22, 1000], [22.2, by + bh / 2 + 8], [23.1, 960]], 2.1, 0.9);
   clickRing(ctx, t, SIGN_T, cxp, cyp);
   cursor(ctx, cxp, cyp, { alpha: seg(t, 22.1, 22.25) * (1 - seg(t, 23.2, 23.4)), press });
-  words(ctx, t, { parts: [['Your wallet signs everything. ', P.ink], ['PAIR never holds funds.', P.muted]], x: W / 2, y: 820, size: 42, weight: 500, t0: 23.0, stagger: 0.04 });
+  words(ctx, t, { parts: [['Your wallet signs every transaction. ', P.ink], ['PAIR never holds funds.', P.muted]], x: W / 2, y: 820, size: 40, weight: 500, t0: 23.0, stagger: 0.04 });
   ctx.restore();
 }
 
-// S12: traction
+// S12: traction (pair.fund/stats, all time, V1 + Launch V2 combined, Sep 29 2026)
 const STATS = [
-  { v: 26, f: (v) => `$${Math.round(v)}M+`, label: 'all-time trading volume', x: 600, y: 420 },
-  { v: 160, f: (v) => `${Math.round(v)}K+`, label: 'trades processed', x: 1320, y: 420 },
-  { v: 180, f: (v) => `$${Math.round(v)}K+`, label: 'paid out to creators', x: 600, y: 710 },
-  { v: 1200, f: (v) => `${fmtInt(v)}+`, label: 'tokens earning creator rewards', x: 1320, y: 710 },
+  { v: 127, f: (v) => `$${Math.round(v)}M+`, label: 'all-time volume', x: 600, y: 420 },
+  { v: 827, f: (v) => `${Math.round(v)}K+`, label: 'trades', x: 1320, y: 420 },
+  { v: 2800, f: (v) => `${fmtInt(Math.floor(v / 100) * 100)}+`, label: 'tokens launched', x: 600, y: 710 },
+  { v: 890, f: (v) => `$${Math.round(v)}K+`, label: 'creator rewards', x: 1320, y: 710 },
 ];
 function sceneStats(ctx, t) {
   const out = easeIn3(seg(t, 27.72, 28.02));
@@ -1136,54 +1264,94 @@ function sceneStats(ctx, t) {
   ctx.save();
   camera(ctx, W / 2, H / 2, 1 - 0.06 * out);
   ctx.globalAlpha = 1 - out;
-  const label = 'FIVE DAYS AFTER MULTIPOOL WENT LIVE';
-  const vis = Math.floor(seg(t, 24.05, 24.4) * label.length);
-  if (vis > 0) tracked(ctx, label, W / 2, 190, { size: 24, weight: 500, fam: MONO, color: P.accent, tracking: 5, visible: vis });
-  // dividers
+  const label = 'ALL TIME ON PAIR';
+  const vis = Math.floor(seg(t, 24.05, 24.3) * label.length);
+  if (vis > 0) tracked(ctx, label, W / 2, 190, { size: 26, weight: 700, fam: MONO, color: P.accentHi, tracking: 6, visible: vis });
+  const ck = spring(t, 24.1, 2.0, 0.85);
+  ctx.save();
+  ctx.globalAlpha *= clamp(ck * 1.3);
+  ctx.translate(0, (1 - ck) * 80);
+  glass(ctx, 220, 245, 1480, 640, 40, { glow: 0.14, shadow: false });
+  ctx.restore();
   const dv = easeInOut3(seg(t, 24.2, 24.9));
   ctx.strokeStyle = P.line;
   ctx.lineWidth = 2;
   ctx.beginPath();
   ctx.moveTo(W / 2, 565 - 260 * dv);
   ctx.lineTo(W / 2, 565 + 260 * dv);
-  ctx.moveTo(W / 2 - 700 * dv, 565);
-  ctx.lineTo(W / 2 + 700 * dv, 565);
+  ctx.moveTo(W / 2 - 680 * dv, 565);
+  ctx.lineTo(W / 2 + 680 * dv, 565);
   ctx.stroke();
   STATS.forEach((s, i) => {
     const ts = STATS_T[i];
     const k = easeOutExpo(seg(t, ts, ts + 0.9));
-    const value = s.f(s.v * k);
-    words(ctx, t, { parts: [[value, P.ink]], x: s.x, y: s.y, size: 132, weight: 700, t0: ts, stagger: 0 });
-    words(ctx, t, { parts: [[s.label, P.muted]], x: s.x, y: s.y + 64, size: 28, weight: 500, t0: ts + 0.12, stagger: 0.03 });
+    words(ctx, t, { parts: [[s.f(s.v * k), P.ink]], x: s.x, y: s.y, size: 124, weight: 700, fam: MONO, t0: ts, stagger: 0 });
+    words(ctx, t, { parts: [[s.label, P.muted]], x: s.x, y: s.y + 68, size: 30, weight: 500, t0: ts + 0.12, stagger: 0.03 });
   });
   const pk = spring(t, 26.75, 2.5, 0.75);
   if (pk > 0) {
     const text = 'PARTNERED WITH AWS TO SCALE';
     ctx.save();
-    ctx.font = font(500, 18, MONO);
+    ctx.font = font(400, 18, MONO);
     ctx.letterSpacing = '3px';
     const w = ctx.measureText(text).width + 56;
     ctx.restore();
     ctx.save();
-    ctx.translate(W / 2, 900);
+    ctx.translate(W / 2, 950);
     ctx.scale(pk, pk);
     ctx.fillStyle = P.panel2;
     rr(ctx, -w / 2, -28, w, 56, 28);
     ctx.fill();
-    ctx.strokeStyle = 'rgba(198,255,74,0.45)';
+    ctx.strokeStyle = A(0.55);
     ctx.lineWidth = 2;
     ctx.stroke();
-    txt(ctx, text, 0, 7, { size: 18, fam: MONO, color: P.ink, align: 'center', ls: 3 });
+    txt(ctx, text, 0, 7, { size: 18, weight: 400, fam: MONO, color: P.ink, align: 'center', ls: 3 });
     ctx.restore();
   }
-  txt(ctx, 'Source: PAIR press release, Aug 31 2026. Multipool went live Aug 26.', W / 2, 1020, { size: 18, fam: MONO, color: P.dim, align: 'center', alpha: seg(t, 27.0, 27.2) });
+  txt(ctx, 'Source: pair.fund/stats, V1 + Launch V2 combined, Sep 29 2026', W / 2, 1035, { size: 17, weight: 400, fam: MONO, color: P.dim, align: 'center', alpha: seg(t, 27.0, 27.2) });
   ctx.restore();
 }
 
 // S13: end card
+function puzzle(ctx, t, cx, cy, width) {
+  // half-scale source geometry from pair.fund's "PAIR IT" art: the joined crop is
+  // 895 wide; the right piece sits 443 px in when snapped, the left at 0.
+  const k = width / 895;
+  const x0 = cx - width / 2;
+  const y0 = cy - (148 * k) / 2;
+  const inK = spring(t, 29.9, 2.4, 0.9);
+  if (inK <= 0) return;
+  const snapped = t >= SNAP_T;
+  const approach = easeIn3(seg(t, 29.95, SNAP_T));
+  const lx = x0 - (1 - approach) * 380 - (1 - inK) * 300;
+  const rx = x0 + 443 * k + (1 - approach) * 380 + (1 - inK) * 300;
+  const pop = 1 + 0.08 * bump(t, SNAP_T, 0.22);
+  ctx.save();
+  ctx.translate(cx, cy);
+  ctx.scale(pop, pop);
+  ctx.translate(-cx, -cy);
+  ctx.globalAlpha *= clamp(inK * 1.5);
+  if (!snapped) {
+    img(ctx, 'left', lx, y0, 520 * k, 148 * k);
+    img(ctx, 'right', rx, y0, 452 * k, 148 * k);
+  } else {
+    img(ctx, 'joined', x0, cy - (143 * k) / 2, 895 * k, 143 * k);
+    const fl = (1 - seg(t, SNAP_T, SNAP_T + 0.22)) ** 2;
+    if (fl > 0) {
+      const R = 120;
+      const g = ctx.createRadialGradient(x0 + 443 * k, cy, 0, x0 + 443 * k, cy, R);
+      g.addColorStop(0, `rgba(233,213,255,${0.55 * fl})`);
+      g.addColorStop(1, 'rgba(233,213,255,0)');
+      ctx.fillStyle = g;
+      ctx.fillRect(x0 + 443 * k - R, cy - R, 2 * R, 2 * R);
+    }
+  }
+  ctx.restore();
+}
+
 function sceneEnd(ctx, t) {
   if (t < 27.95) return;
-  // ring of every launchable stock token, collapsing into the wordmark
+  // ring of stock tokens collapsing into the lockup
   const collapse = easeIn3(seg(t, 28.55, 29.0));
   if (collapse < 1) {
     TICKERS.forEach((tk, i) => {
@@ -1199,12 +1367,12 @@ function sceneEnd(ctx, t) {
       const sc = 1 - 0.6 * collapse;
       ctx.scale(sc, sc);
       ctx.fillStyle = P.panel2;
-      rr(ctx, -60, -24, 120, 48, 24);
+      rr(ctx, -62, -24, 124, 48, 24);
       ctx.fill();
-      ctx.strokeStyle = 'rgba(255,255,255,0.14)';
+      ctx.strokeStyle = A(0.35);
       ctx.lineWidth = 1.5;
       ctx.stroke();
-      txt(ctx, tk, 0, 7, { size: 20, weight: 600, fam: MONO, color: P.ink, align: 'center' });
+      txt(ctx, tk, 0, 7, { size: 19, weight: 700, fam: MONO, color: P.ink, align: 'center' });
       ctx.restore();
     });
   }
@@ -1213,46 +1381,39 @@ function sceneEnd(ctx, t) {
     TICKERS.forEach((tk, i) => {
       const R = 500 * ex;
       const a = (i / TICKERS.length) * Math.PI * 2 + t * 0.12 + 1.7;
-      const x = W / 2 + Math.cos(a) * R * 1.62;
-      const y = H / 2 + Math.sin(a) * R * 0.9;
+      const x = W / 2 + Math.cos(a) * R * 1.66;
+      const y = H / 2 + Math.sin(a) * R * 0.95;
       ctx.save();
-      ctx.globalAlpha = 0.32 * ex;
+      ctx.globalAlpha = 0.22 * ex;
       ctx.translate(x, y);
       ctx.fillStyle = P.panel2;
-      rr(ctx, -60, -24, 120, 48, 24);
+      rr(ctx, -62, -24, 124, 48, 24);
       ctx.fill();
       ctx.strokeStyle = 'rgba(255,255,255,0.14)';
       ctx.lineWidth = 1.5;
       ctx.stroke();
-      txt(ctx, tk, 0, 7, { size: 20, weight: 600, fam: MONO, color: P.ink, align: 'center' });
+      txt(ctx, tk, 0, 7, { size: 19, weight: 700, fam: MONO, color: P.ink, align: 'center' });
       ctx.restore();
     });
     const sk = seg(t, 29.0, 29.7);
     if (sk < 1) {
       ctx.save();
-      ctx.globalAlpha = (1 - sk) * 0.55;
-      ctx.strokeStyle = P.accent;
+      ctx.globalAlpha = (1 - sk) * 0.6;
+      ctx.strokeStyle = P.accentHi;
       ctx.lineWidth = 3;
-      circle(ctx, W / 2, H / 2 - 40, 60 + 1000 * easeOut3(sk));
+      circle(ctx, W / 2, 300, 60 + 1000 * easeOut3(sk));
       ctx.stroke();
       ctx.restore();
     }
-    wordmark(ctx, t, 29.0, 520, 250);
-    words(ctx, t, { parts: [['Pair your token with ', P.ink], ['the market.', P.accent]], x: W / 2, y: 640, size: 56, weight: 600, t0: 29.5, stagger: 0.06 });
-    const pk = spring(t, 30.0, 2.6, 0.7);
-    if (pk > 0) {
-      ctx.save();
-      ctx.translate(W / 2, 760);
-      ctx.scale(pk, pk);
-      ctx.fillStyle = P.accent;
-      rr(ctx, -150, -38, 300, 76, 38);
-      ctx.fill();
-      txt(ctx, 'pair.fund', 0, 11, { size: 32, weight: 700, fam: MONO, color: P.accentInk, align: 'center' });
-      ctx.restore();
-    }
+    lockup(ctx, t, 29.0, 370, 190);
+    words(ctx, t, { parts: [['Pair ', P.ink], ['Anything. ', P.accent], ['And ', P.ink], ['Everything.', P.accent]], x: W / 2, y: 525, size: 68, weight: 700, t0: 29.45, stagger: 0.07 });
+    puzzle(ctx, t, W / 2, 660, 600);
+    const pk = seg(t, 30.5, 30.7);
+    if (pk > 0) txt(ctx, 'pair.fund', W / 2, 820, { size: 40, weight: 700, fam: MONO, color: P.ink, align: 'center', alpha: pk });
     const label = 'LIVE ON ROBINHOOD CHAIN';
-    const vis = Math.floor(seg(t, 30.3, 30.6) * label.length);
-    if (vis > 0) tracked(ctx, label, W / 2, 870, { size: 20, weight: 500, fam: MONO, color: P.muted, tracking: 5, visible: vis });
+    const vis = Math.floor(seg(t, 30.7, 31.0) * label.length);
+    if (vis > 0) tracked(ctx, label, W / 2, 880, { size: 20, weight: 400, fam: MONO, color: P.muted, tracking: 5, visible: vis });
+    txt(ctx, 'Tokens can be volatile or lose all value. PAIR does not provide custody, warranties, or financial advice.', W / 2, 1040, { size: 15, weight: 400, fam: MONO, color: P.dim, align: 'center', alpha: seg(t, 30.9, 31.1) });
   }
 }
 
@@ -1264,12 +1425,12 @@ export function draw(ctx, t) {
   ctx.textBaseline = 'alphabetic';
   ctx.letterSpacing = '0px';
 
-  let gridScale = 1;
-  if (t < 2) gridScale = 1 + 0.4 * easeIn3(seg(t, 1.55, 2.0));
-  background(ctx, t, gridScale);
+  let zoom = 1;
+  if (t < 2) zoom = 1 + 0.35 * easeIn3(seg(t, 1.55, 2.0));
+  background(ctx, t, zoom);
 
   // ticker wall behind S4 and S5
-  const wallA = t < 6 || t > 10.1 ? 0 : t < 8 ? 0.045 * (1 + 1.2 * easeIn3(seg(t, 7.5, 8.0))) : 0.03 * (1 - seg(t, 9.5, 9.9));
+  const wallA = t < 6 || t > 10.1 ? 0 : t < 8 ? 0.05 * (1 + 1.2 * easeIn3(seg(t, 7.5, 8.0))) : 0.03 * (1 - seg(t, 9.5, 9.9));
   if (wallA > 0) {
     ctx.save();
     const zs = t < 8 ? 1 + 0.25 * easeIn3(seg(t, 7.6, 8.0)) : 1;
@@ -1296,7 +1457,7 @@ export function draw(ctx, t) {
   // flash on the two big hits
   const fl = Math.max(t >= 8 ? 1 - seg(t, 8.0, 8.22) : 0, t >= 29 ? 1 - seg(t, 29.0, 29.22) : 0);
   if (fl > 0) {
-    ctx.fillStyle = `rgba(242,243,238,${0.22 * fl})`;
+    ctx.fillStyle = `rgba(245,235,255,${0.22 * fl})`;
     ctx.fillRect(0, 0, W, H);
   }
 

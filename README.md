@@ -25,35 +25,43 @@
 
 | 时间 | 小节 | 画面 | 声音 |
 | --- | --- | --- | --- |
-| 0 至 2s | 1 | “Every token needs a pair.” 句号是一个青柠色圆点，镜头推进圆点 | 前奏铺底，心跳底鼓 |
-| 2 至 4s | 2 | 圆点变成 $ORBIT 代币，与 ETH 配对，价格线剧烈波动：“Most tokens pair with a gas coin.” | 律动进入 |
+| 0 至 2s | 1 | “Every token needs a pair.” 句号是一颗紫色球体（取自 PAIR Logo），镜头推进球体 | 前奏铺底，心跳底鼓 |
+| 2 至 4s | 2 | 球体变成 $ORBIT 代币，与 ETH 配对，价格线剧烈波动：“Most tokens pair with a gas coin.” | 律动进入 |
 | 4 至 6s | 3 | “Stop launching against ETH.” ETH 被划掉，连线断开，ETH 掉落 | Breakdown，军鼓滚奏 |
-| 6 至 8s | 4 | 青柠色圆形转场。“Start launching against the companies that actually print money.” 背景是股票代码墙 | 全律动，上升音效 |
-| 8 至 10s | 5 | PAIR 字标落版：“Launch tokens paired with tokenized stocks.” | Drop，重击 |
-| 10 至 14s | 6 至 7 | 发币界面：输入 Orbit / $ORBIT，在 24 个股票代币中点选 NVDA、TSLA、AAPL、SPY，每次点击落在拍点上，镜头跟随焦点缩放 | 拨弦琶音，打字、点击音 |
-| 14 至 16s | 8 | 点击 Launch，按钮变成加载圈，打勾，变成代币；四个池子同时生成并上锁：“One transaction. Four pools.” | 提示音，四连弹出，上锁 |
-| 16 至 18s | 9 | “No bonding curve. No price ceiling. No migration.” | 每行一拍 |
+| 6 至 8s | 4 | 紫色圆形转场。“Start launching against the companies that actually print money.” 背景是股票代码墙 | 全律动，上升音效 |
+| 8 至 10s | 5 | PAIR Logo 与字标落版：“Launch tokens paired with tokenized stocks.” | Drop，重击 |
+| 10 至 14s | 6 至 7 | 发币界面（官网玻璃卡片风格）：输入 Orbit / $ORBIT，点选 NVDA、TSLA、AAPL、SPY 并分配 40/25/20/15%，每次点击落在拍点上，镜头跟随焦点缩放 | 拨弦琶音，打字、点击音 |
+| 14 至 16s | 8 | 点击 Launch token，按钮变成加载圈，打勾，变成代币球体；四个市场同时生成：“One transaction. Four markets.” | 提示音，四连弹出 |
+| 16 至 18s | 9 | “No bonding curve. No migration. Liquidity never moves.” | 每行一拍 |
 | 18 至 20s | 10 | 池子固定不动，下面的时间轴从 SECOND 1 走到 YEAR 5：“The pool at second one is the pool at year five.” | 每格一个滴答 |
-| 20 至 22s | 11 | “1% swap fee on every trade.” 分成条长出 70% 创作者 / 30% 协议金库 | 刷过音效 |
+| 20 至 22s | 11 | “Choose where fees go.” 四种手续费策略卡片，高亮框在卡片间伸缩滑动 | 弹出、刷过音效 |
 | 22 至 24s | 12 | 钱包签名卡片，光标点 Sign：“Non-custodial. By design.” | 点击，提示音 |
-| 24 至 28s | 13 至 14 | 数据计数：$26M+ 累计交易量，160K+ 笔交易，$180K+ 创作者收益，1,200+ 代币；“Partnered with AWS to scale” | 计数滴答，上升音效 |
-| 28 至 32s | 15 至 16 | 24 个股票代币绕成环，收拢成 PAIR 字标：“Pair your token with the market.” / pair.fund | 重击，F add9 和弦收尾 |
+| 24 至 28s | 13 至 14 | 全量数据计数：$127M+ 交易量，827K+ 笔交易，2,800+ 个代币，$890K+ 创作者收益；“Partnered with AWS to scale” | 计数滴答，上升音效 |
+| 28 至 32s | 15 至 16 | 股票代币绕成环，收拢成 PAIR Logo 与字标：“Pair Anything. And Everything.” 官网的 “PAIR IT” 拼图从两侧飞入并咬合，pair.fund，底部风险提示 | 重击，咬合音，F add9 和弦收尾 |
 
-## 片中事实的来源
+## 品牌与事实来源
 
-pair.fund 在本次构建环境中被网络策略拦截，所以文案依据公开的新闻稿和文档摘要（2026 年 8 月 31 日 GlobeNewswire 新闻稿，以及 pair.fund/docs 的搜索摘要）：
+2026 年 9 月 29 日直接读取 pair.fund 官网、文档（/docs）和数据页（/stats）：
 
-- Robinhood Chain 上的多池（multipool）发币平台，新代币可与 1 至 5 个 Robinhood 股票代币配对，一笔交易完成
-- Uniswap v4 流动性永久锁定，没有 bonding curve、没有价格上限、不迁移
-- 1% 交易手续费，70% 给代币创作者，30% 给协议金库，可无许可领取、按资产领取
-- 非托管：钱包签署每笔交易，PAIR 不持有资金
-- 多池上线（8 月 26 日）后五天：累计交易量超过 2600 万美元，超过 16 万笔交易，超过 18 万美元创作者收益，覆盖 1200 多个代币
-- 与 AWS 合作扩展基础设施
-- 24 个可配对股票代币：AAPL, AMC, AMD, AMZN, BABA, BE, CRCL, CRWV, GOOGL, INTC, META, MSFT, MU, NVDA, ORCL, PLTR, QQQ, SGOV, SLV, SNDK, SPCX, SPY, TSLA, USAR
+**品牌**
+- 颜色取自官网 CSS 暗色主题：背景 `#050505`，文字 `#F5F5F7` / `#98989D` / `#636366`，主色紫 `#A855F7`（高亮 `#B975F9`），红 `#F06455`，绿 `#34D399`。按钮使用官网主按钮的紫色渐变。
+- 字体与官网一致：Space Grotesk（正文、标题）与 Space Mono（数字、标签、按钮），均为 SIL OFL 1.1。
+- `assets/brand/` 中的 Logo（月牙与紫色球体）、“PAIR IT” 拼图和星空月球背景来自 pair.fund，版权归 PAIR Labs。
+- 结尾口号 “Pair Anything. And Everything.” 与底部风险提示均为官网原文。
 
-片中的 $ORBIT 是虚构的示例代币，价格曲线是示意动画。
+**产品事实（pair.fund/docs）**
+- Robinhood Chain 上的无许可发币平台，发币方式有 V1、Launch V2 和 Infinity（当前默认）。
+- 一笔交易原子化地创建代币和 1 至 5 个带权重的配对市场，每个配对资产有自己独立的池子。
+- 没有 bonding curve；“毕业”不会迁移流动性，交易一直在原来的池子里进行。
+- Launch V2 与 Infinity 的手续费按策略执行：创作者收费、分成给多个钱包、回购销毁、分配给持有者。V1 为固定的 1% 交易费，70% 给创作者，30% 给协议金库。
+- 非托管：钱包直接对合约签署每笔交易，PAIR Labs 不持有资金。
+- 片中发币界面出现的 24 个代码，都在文档当前启用的股票代币列表中（共 61 个）。
 
-**品牌色是占位值**：因为拿不到官网，青柠色主色 `#C6FF4A` 是临时选的。所有颜色都在 [`src/scene.js`](src/scene.js) 顶部的 `P` 对象里，改完重新渲染即可。
+**数据（pair.fund/stats，All time，V1 与 Launch V2 合计）**
+- 累计交易量 $127.16M，发币 2.8K 个，交易 827.1K 笔，创作者收益 $890.13K（官网按 交易量 × 1% × 70% 计算）。
+- 与 AWS 合作扩展基础设施的说法来自 2026 年 8 月 31 日的新闻稿。
+
+片中的 $ORBIT 是虚构的示例代币，价格曲线和发币界面是示意动画（官网发币页需要连接钱包，无法截取），样式按官网的卡片和按钮重绘。
 
 ## 重新渲染
 
@@ -73,10 +81,11 @@ npm run preview             # 浏览器预览 http://localhost:8080 ，可拖动
 ## 文件
 
 ```
-src/scene.js        场景：draw(ctx, t) 纯函数，所有时间点、文案、配色
+src/scene.js        场景：draw(ctx, t) 纯函数，所有时间点、文案、品牌色
 scripts/render.mjs  帧渲染（@napi-rs/canvas）+ 子帧运动模糊 + ffmpeg 编码
 scripts/audio.mjs   配乐与音效合成，读取 scene.js 里的 CUES 对齐到帧
 index.html          浏览器实时预览（同一个 scene.js）
-assets/fonts/       Geist / Geist Mono（SIL OFL 1.1）
+assets/fonts/       Space Grotesk / Space Mono（SIL OFL 1.1）
+assets/brand/       PAIR 的 Logo、拼图和背景（来自 pair.fund）
 out/                成片、海报帧
 ```
