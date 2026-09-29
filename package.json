@@ -6,6 +6,7 @@
     "audio": "node scripts/audio.mjs",
     "contact": "node scripts/render.mjs --contact",
     "render": "node scripts/audio.mjs && node scripts/render.mjs",
+    "render:zh": "node scripts/audio.mjs && node scripts/render.mjs --lang zh",
     "preview": "npx http-server -c-1 -p 8080 ."
   },
   "repository": {

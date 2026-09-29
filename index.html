@@ -11,6 +11,7 @@
   @font-face { font-family: 'Space Grotesk'; font-weight: 700; src: url(assets/fonts/SpaceGrotesk-700.ttf); }
   @font-face { font-family: 'Space Mono'; font-weight: 400; src: url(assets/fonts/SpaceMono-400.ttf); }
   @font-face { font-family: 'Space Mono'; font-weight: 700; src: url(assets/fonts/SpaceMono-700.ttf); }
+  @font-face { font-family: 'Noto Sans SC'; font-weight: 500; src: url(assets/fonts/NotoSansSC-500-subset.ttf); }
   :root { --bg: #050505; --ink: #f5f5f7; --muted: #98989d; --accent: #a855f7; }
   * { box-sizing: border-box; }
   body { margin: 0; min-height: 100vh; background: var(--bg); color: var(--ink); font: 14px/1.4 'Space Mono', ui-monospace, monospace; display: grid; place-items: center; padding: 16px; }
@@ -43,6 +44,8 @@
   const time = document.getElementById('time');
   const sceneLabel = document.getElementById('scene');
   scrub.max = DURATION;
+  // ?lang=zh previews the Chinese subtitle track
+  const lang = new URLSearchParams(location.search).get('lang');
 
   // the audio element is the clock when it loaded; otherwise a wall clock
   let hasAudio = false;
@@ -56,7 +59,7 @@
       t = now();
       if (t >= DURATION) { t = 0; seek(0); }
     }
-    draw(ctx, Math.min(t, DURATION - 1e-6));
+    draw(ctx, Math.min(t, DURATION - 1e-6), { lang });
     scrub.value = t;
     time.textContent = `${t.toFixed(2)} / ${DURATION.toFixed(2)}`;
     const s = SCENES.find((s) => t >= s.from && t < s.to);
@@ -85,7 +88,7 @@
   });
 
   const fams = ['400 10px "Space Grotesk"', '500 10px "Space Grotesk"', '600 10px "Space Grotesk"', '700 10px "Space Grotesk"',
-    '400 10px "Space Mono"', '700 10px "Space Mono"'];
+    '400 10px "Space Mono"', '700 10px "Space Mono"', '500 10px "Noto Sans SC"'];
   const images = {};
   const loads = Object.entries(IMAGE_FILES).map(([key, src]) => {
     const im = new Image();

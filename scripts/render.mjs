@@ -4,7 +4,7 @@
 //   node scripts/render.mjs --contact          contact sheets (one frame per beat) -> build/contact-*.png
 //   node scripts/render.mjs --still 29.8       single frame -> build/still-29.80.png
 //
-// Options: --fps 60 --sub 4 (motion blur subframes) --fast-sub 16 --shutter 0.5 --workers N
+// Options: --lang zh (burned-in subtitles + .srt) --fps 60 --sub 4 (motion blur subframes) --fast-sub 16 --shutter 0.5 --workers N
 //          --from 0 --to 32 --crf 16 --out path
 import { spawn } from 'node:child_process';
 import { availableParallelism } from 'node:os';
@@ -12,7 +12,8 @@ import { mkdirSync, writeFileSync, existsSync, unlinkSync } from 'node:fs';
 import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { createCanvas, GlobalFonts, loadImage } from '@napi-rs/canvas';
-import { W, H, FPS, DURATION, BEAT, FAST, IMAGE_FILES, setImages, draw } from '../src/scene.js';
+import { W, H, FPS, DURATION, BEAT, FAST, IMAGE_FILES, setImages, draw as drawScene } from '../src/scene.js';
+import { SUBS, toSRT } from '../src/subtitles.js';
 
 const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const BUILD = join(ROOT, 'build');
@@ -28,6 +29,12 @@ const opt = (name, def) => {
 
 for (const w of [400, 500, 600, 700]) GlobalFonts.registerFromPath(join(ROOT, `assets/fonts/SpaceGrotesk-${w}.ttf`), 'Space Grotesk');
 for (const w of [400, 700]) GlobalFonts.registerFromPath(join(ROOT, `assets/fonts/SpaceMono-${w}.ttf`), 'Space Mono');
+GlobalFonts.registerFromPath(join(ROOT, 'assets/fonts/NotoSansSC-500-subset.ttf'), 'Noto Sans SC');
+
+// --lang zh burns in that subtitle track
+const LANG = opt('lang', null);
+if (LANG && !SUBS[LANG]) throw new Error(`no subtitle track "${LANG}"`);
+const draw = (ctx, t) => drawScene(ctx, t, { lang: LANG });
 
 const images = {};
 for (const [key, file] of Object.entries(IMAGE_FILES)) images[key] = await loadImage(join(ROOT, file));
@@ -78,7 +85,7 @@ function makeFrameRenderer(baseSub, shutter, fps, fastSub = baseSub) {
 async function still(t) {
   const render = makeFrameRenderer(1, 0, FPS);
   const cv = render(t);
-  const file = join(BUILD, `still-${t.toFixed(2)}.png`);
+  const file = join(BUILD, `still-${t.toFixed(2)}${LANG ? `-${LANG}` : ''}.png`);
   writeFileSync(file, cv.toBuffer('image/png'));
   console.log(file);
 }
@@ -104,7 +111,7 @@ async function contact() {
       sctx.font = '400 18px "Space Mono"';
       sctx.fillText(`t=${t.toFixed(2)}s`, x + 8, y + 20);
     });
-    const file = join(BUILD, `contact-${s + 1}.png`);
+    const file = join(BUILD, `contact-${s + 1}${LANG ? `-${LANG}` : ''}.png`);
     writeFileSync(file, sheet.toBuffer('image/png'));
     console.log(file);
   }
@@ -142,7 +149,7 @@ async function film() {
   const from = Number(opt('from', 0));
   const to = Number(opt('to', DURATION));
   const workers = Number(opt('workers', Math.max(1, availableParallelism())));
-  const out = resolve(ROOT, opt('out', 'out/pair-promo.mp4'));
+  const out = resolve(ROOT, opt('out', LANG ? `out/pair-promo-${LANG}.mp4` : 'out/pair-promo.mp4'));
   mkdirSync(dirname(out), { recursive: true });
 
   const f0 = Math.round(from * fps), f1 = Math.round(to * fps);
@@ -155,17 +162,17 @@ async function film() {
   for (let w = 0; w < workers; w++) {
     const a = f0 + w * per, b = Math.min(f1, a + per);
     if (a >= b) break;
-    const file = join(BUILD, `seg-${String(w).padStart(2, '0')}.mp4`);
+    const file = join(BUILD, `seg-${LANG ?? 'en'}-${String(w).padStart(2, '0')}.mp4`);
     parts.push(file);
-    jobs.push(run(process.execPath, [fileURLToPath(import.meta.url), '--segment', `${a}:${b}`, '--file', file, '--fps', fps, '--sub', sub, '--fast-sub', fastSub, '--shutter', shutter, '--crf', crf], { stdio: ['ignore', 'inherit', 'inherit'] }));
+    jobs.push(run(process.execPath, [fileURLToPath(import.meta.url), '--segment', `${a}:${b}`, '--file', file, '--fps', fps, '--sub', sub, '--fast-sub', fastSub, '--shutter', shutter, '--crf', crf, ...(LANG ? ['--lang', LANG] : [])], { stdio: ['ignore', 'inherit', 'inherit'] }));
   }
   await Promise.all(jobs);
   console.log(`frames done in ${((Date.now() - t0) / 1000).toFixed(1)}s`);
 
-  const list = join(BUILD, 'segments.txt');
+  const list = join(BUILD, `segments-${LANG ?? 'en'}.txt`);
   writeFileSync(list, parts.map((p) => `file '${p}'`).join('\n'));
   const ff = await ffmpegPath();
-  const video = join(BUILD, 'video.mp4');
+  const video = join(BUILD, `video-${LANG ?? 'en'}.mp4`);
   await run(ff, ['-y', '-loglevel', 'error', '-f', 'concat', '-safe', '0', '-i', list, '-c', 'copy', video]);
   parts.forEach((p) => existsSync(p) && unlinkSync(p));
 
@@ -180,6 +187,11 @@ async function film() {
     await run(ff, ['-y', '-loglevel', 'error', '-i', video, '-c', 'copy', '-movflags', '+faststart', out]);
   }
   console.log(`wrote ${out}`);
+  if (LANG) {
+    const srt = out.replace(/\.mp4$/, '.srt');
+    writeFileSync(srt, toSRT(SUBS[LANG]));
+    console.log(`wrote ${srt}`);
+  }
 }
 
 if (args.includes('--segment')) {

@@ -4,6 +4,8 @@
 // Runs unchanged in the browser (index.html preview) and in Node
 // (@napi-rs/canvas, scripts/render.mjs).
 
+import { SUBS } from './subtitles.js';
+
 export const W = 1920;
 export const H = 1080;
 export const FPS = 60;
@@ -33,6 +35,7 @@ export const P = {
 const A = (a) => `rgba(168,85,247,${a})`;
 
 const SANS = '"Space Grotesk"';
+const CJK = '"Noto Sans SC"';
 const MONO = '"Space Mono"';
 const font = (weight, size, fam = SANS) => `${weight} ${size}px ${fam}`;
 
@@ -48,6 +51,9 @@ let IMG = {};
 export function setImages(images) {
   IMG = images;
 }
+
+// Per-frame options, reset by every draw() call (keeps frames pure).
+let MODE = { lang: null };
 
 // A selection of the Stock Tokens enabled in PAIR's registry (pair.fund/docs, Sep 29 2026).
 export const TICKERS = [
@@ -749,10 +755,13 @@ const CURSOR_MOVES = [
 const CLICKS = [10.15, 10.8, ...PICKS.map((p) => p.t), LAUNCH_T];
 
 function cameraLaunch(t) {
+  // with subtitles, the grid shot pulls back a little so the button clears the caption plate
+  const gy = MODE.lang ? 600 : 562;
+  const gs = MODE.lang ? 1.38 : 1.5;
   return {
     x: W / 2,
-    y: keys(t, [[10, H / 2], [10.1, 342], [11.12, 562], [13.2, 800], [14.02, H / 2]], 1.6, 0.92),
-    s: keys(t, [[10, 1], [10.1, 1.5], [11.12, 1.5], [13.2, 1.48], [14.02, 1]], 1.6, 0.92),
+    y: keys(t, [[10, H / 2], [10.1, 342], [11.12, gy], [13.2, 800], [14.02, H / 2]], 1.6, 0.92),
+    s: keys(t, [[10, 1], [10.1, 1.5], [11.12, gs], [13.2, 1.48], [14.02, 1]], 1.6, 0.92),
   };
 }
 
@@ -1050,7 +1059,8 @@ function sceneCluster(ctx, t) {
 
 function sceneLaunchCopy(ctx, t) {
   words(ctx, t, { parts: [['One transaction. ', P.ink], ['Four markets.', P.accent]], x: W / 2, y: 160, size: 80, weight: 700, t0: 14.72, stagger: 0.06, out: 15.86 });
-  words(ctx, t, { parts: [['Every paired asset gets ', P.muted], ['its own pool.', P.ink]], x: W / 2, y: 1000, size: 38, weight: 500, t0: 15.5, stagger: 0.04, out: 15.9 });
+  // subtitled versions carry this line in the caption instead
+  if (!MODE.lang) words(ctx, t, { parts: [['Every paired asset gets ', P.muted], ['its own pool.', P.ink]], x: W / 2, y: 1000, size: 38, weight: 500, t0: 15.5, stagger: 0.04, out: 15.9 });
 }
 
 // S8
@@ -1297,7 +1307,7 @@ function sceneStats(ctx, t) {
     const w = ctx.measureText(text).width + 56;
     ctx.restore();
     ctx.save();
-    ctx.translate(W / 2, 950);
+    ctx.translate(W / 2, MODE.lang ? 928 : 950);
     ctx.scale(pk, pk);
     ctx.fillStyle = P.panel2;
     rr(ctx, -w / 2, -28, w, 56, 28);
@@ -1308,7 +1318,7 @@ function sceneStats(ctx, t) {
     txt(ctx, text, 0, 7, { size: 18, weight: 400, fam: MONO, color: P.ink, align: 'center', ls: 3 });
     ctx.restore();
   }
-  txt(ctx, 'Source: pair.fund/stats, V1 + Launch V2 combined, Sep 29 2026', W / 2, 1035, { size: 17, weight: 400, fam: MONO, color: P.dim, align: 'center', alpha: seg(t, 27.0, 27.2) });
+  if (!MODE.lang) txt(ctx, 'Source: pair.fund/stats, V1 + Launch V2 combined, Sep 29 2026', W / 2, 1035, { size: 17, weight: 400, fam: MONO, color: P.dim, align: 'center', alpha: seg(t, 27.0, 27.2) });
   ctx.restore();
 }
 
@@ -1413,12 +1423,45 @@ function sceneEnd(ctx, t) {
     const label = 'LIVE ON ROBINHOOD CHAIN';
     const vis = Math.floor(seg(t, 30.7, 31.0) * label.length);
     if (vis > 0) tracked(ctx, label, W / 2, 880, { size: 20, weight: 400, fam: MONO, color: P.muted, tracking: 5, visible: vis });
-    txt(ctx, 'Tokens can be volatile or lose all value. PAIR does not provide custody, warranties, or financial advice.', W / 2, 1040, { size: 15, weight: 400, fam: MONO, color: P.dim, align: 'center', alpha: seg(t, 30.9, 31.1) });
+    if (!MODE.lang) txt(ctx, 'Tokens can be volatile or lose all value. PAIR does not provide custody, warranties, or financial advice.', W / 2, 1040, { size: 15, weight: 400, fam: MONO, color: P.dim, align: 'center', alpha: seg(t, 30.9, 31.1) });
   }
 }
 
+// ---------------------------------------------------------------- subtitles
+// Bottom-centered captions on a dark rounded plate; lines stack upward.
+function subtitles(ctx, t, track) {
+  const s = track.find((x) => t >= x.from && t < x.to);
+  if (!s) return;
+  const a = seg(t, s.from, s.from + 0.1) * (1 - seg(t, s.to - 0.1, s.to));
+  if (a <= 0) return;
+  const size = s.size ?? 40;
+  const lh = size * 1.45;
+  const lines = s.text.split('\n');
+  ctx.save();
+  ctx.globalAlpha = a;
+  ctx.font = font(500, size, CJK);
+  ctx.letterSpacing = '1px';
+  const w = Math.max(...lines.map((l) => ctx.measureText(l).width));
+  const base = 1024;
+  const padX = 26, padY = 14;
+  const top = base - size * 0.95 - (lines.length - 1) * lh - padY;
+  const bottom = base + size * 0.28 + padY;
+  ctx.fillStyle = 'rgba(5,5,5,0.66)';
+  rr(ctx, W / 2 - w / 2 - padX, top, w + padX * 2, bottom - top, 14);
+  ctx.fill();
+  ctx.strokeStyle = 'rgba(255,255,255,0.06)';
+  ctx.lineWidth = 1;
+  ctx.stroke();
+  ctx.fillStyle = P.ink;
+  ctx.textAlign = 'center';
+  lines.forEach((l, i) => ctx.fillText(l, W / 2, base - (lines.length - 1 - i) * lh));
+  ctx.restore();
+}
+
 // ---------------------------------------------------------------- frame
-export function draw(ctx, t) {
+// opts.lang: burn in that subtitle track (see src/subtitles.js).
+export function draw(ctx, t, opts = {}) {
+  MODE = { lang: opts.lang && SUBS[opts.lang] ? opts.lang : null };
   ctx.setTransform(1, 0, 0, 1, 0, 0);
   ctx.globalAlpha = 1;
   ctx.filter = 'none';
@@ -1462,6 +1505,8 @@ export function draw(ctx, t) {
   }
 
   vignette(ctx);
+
+  if (MODE.lang) subtitles(ctx, t, SUBS[MODE.lang]);
 
   // fade in from black / out to black
   const fb = Math.max(1 - seg(t, 0, 0.08), seg(t, DURATION - 0.3, DURATION));

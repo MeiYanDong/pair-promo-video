@@ -4,7 +4,9 @@
 
 ![poster](out/poster.jpg)
 
-**成片：[`out/pair-promo.mp4`](out/pair-promo.mp4)**
+**成片：[`out/pair-promo.mp4`](out/pair-promo.mp4)**（英文原版）
+
+**中文字幕版：[`out/pair-promo-zh.mp4`](out/pair-promo-zh.mp4)**（字幕压制在画面中），另附字幕文件 [`out/pair-promo-zh.srt`](out/pair-promo-zh.srt)，可上传到 YouTube、B 站等平台做外挂字幕
 
 | 项目 | 规格 |
 | --- | --- |
@@ -61,6 +63,12 @@
 - 累计交易量 $127.16M，发币 2.8K 个，交易 827.1K 笔，创作者收益 $890.13K（官网按 交易量 × 1% × 70% 计算）。
 - 与 AWS 合作扩展基础设施的说法来自 2026 年 8 月 31 日的新闻稿。
 
+## 中文字幕版
+
+- 字幕文本和时间轴在 [`src/subtitles.js`](src/subtitles.js)，每条字幕对应画面上英文文案出现的时间段。“发行代币”“创作者奖励”和结尾的风险提示沿用 pair.fund 中文界面的官方用语；bonding curve 按中文加密社区的常用译法写作“联合曲线”。
+- 字体为 Noto Sans SC 500（SIL OFL 1.1），只包含字幕用到的字，约 50KB。修改字幕后运行 `node scripts/fetch-subtitle-font.mjs` 重新生成字体子集。
+- 字幕版里，底部的英文数据来源和风险提示改由中文字幕呈现，第 15 秒的英文小字说明也交给字幕；发币界面的镜头稍微拉远、AWS 标签上移，避免被字幕框遮挡。其余画面与英文版完全一致。
+
 片中的 $ORBIT 是虚构的示例代币，价格曲线和发币界面是示意动画（官网发币页需要连接钱包，无法截取），样式按官网的卡片和按钮重绘。
 
 ## 重新渲染
@@ -72,8 +80,9 @@ pip install imageio-ffmpeg  # 自带 libx264 的 ffmpeg；也可以设置 FFMPEG
 npm run audio               # build/audio.wav（合成配乐 + 音效，响度归一化）
 npm run contact             # build/contact-*.png，每拍一帧的联系表
 node scripts/render.mjs     # out/pair-promo.mp4（并行渲染，自动混入音轨）
+node scripts/render.mjs --lang zh   # out/pair-promo-zh.mp4 + .srt（中文字幕版）
 node scripts/render.mjs --still 29.8   # 单帧检查
-npm run preview             # 浏览器预览 http://localhost:8080 ，可拖动时间轴
+npm run preview             # 浏览器预览 http://localhost:8080 ，可拖动时间轴；加 ?lang=zh 预览字幕版
 ```
 
 渲染参数：`--fps 60 --sub 4 --fast-sub 16 --shutter 0.5 --crf 16 --workers N --from 0 --to 32`。快速镜头的时间窗在 `src/scene.js` 的 `FAST` 里。4 核机器上全片约 4 分钟。
@@ -81,11 +90,12 @@ npm run preview             # 浏览器预览 http://localhost:8080 ，可拖动
 ## 文件
 
 ```
-src/scene.js        场景：draw(ctx, t) 纯函数，所有时间点、文案、品牌色
+src/scene.js        场景：draw(ctx, t, { lang }) 纯函数，所有时间点、文案、品牌色
+src/subtitles.js    中文字幕轨道与 SRT 导出
 scripts/render.mjs  帧渲染（@napi-rs/canvas）+ 子帧运动模糊 + ffmpeg 编码
 scripts/audio.mjs   配乐与音效合成，读取 scene.js 里的 CUES 对齐到帧
 index.html          浏览器实时预览（同一个 scene.js）
-assets/fonts/       Space Grotesk / Space Mono（SIL OFL 1.1）
+assets/fonts/       Space Grotesk / Space Mono / Noto Sans SC 子集（SIL OFL 1.1）
 assets/brand/       PAIR 的 Logo、拼图和背景（来自 pair.fund）
 out/                成片、海报帧
 ```
