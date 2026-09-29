@@ -1,0 +1,25 @@
+{
+  "name": "pair-promo-video",
+  "version": "1.0.0",
+  "description": "PAIR promo film rendered from code",
+  "scripts": {
+    "audio": "node scripts/audio.mjs",
+    "contact": "node scripts/render.mjs --contact",
+    "render": "node scripts/audio.mjs && node scripts/render.mjs",
+    "preview": "npx http-server -c-1 -p 8080 ."
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/MeiYanDong/pair-promo-video.git"
+  },
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/MeiYanDong/pair-promo-video/issues"
+  },
+  "homepage": "https://github.com/MeiYanDong/pair-promo-video#readme",
+  "dependencies": {
+    "@napi-rs/canvas": "^1.0.9"
+  },
+  "type": "module",
+  "private": true
+}

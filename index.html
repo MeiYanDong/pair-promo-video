@@ -1,0 +1,94 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>PAIR Promo Preview</title>
+<style>
+  @font-face { font-family: 'Geist'; font-weight: 400; src: url(assets/fonts/Geist-400.ttf); }
+  @font-face { font-family: 'Geist'; font-weight: 500; src: url(assets/fonts/Geist-500.ttf); }
+  @font-face { font-family: 'Geist'; font-weight: 600; src: url(assets/fonts/Geist-600.ttf); }
+  @font-face { font-family: 'Geist'; font-weight: 700; src: url(assets/fonts/Geist-700.ttf); }
+  @font-face { font-family: 'Geist'; font-weight: 800; src: url(assets/fonts/Geist-800.ttf); }
+  @font-face { font-family: 'Geist Mono'; font-weight: 400; src: url(assets/fonts/GeistMono-400.ttf); }
+  @font-face { font-family: 'Geist Mono'; font-weight: 500; src: url(assets/fonts/GeistMono-500.ttf); }
+  @font-face { font-family: 'Geist Mono'; font-weight: 700; src: url(assets/fonts/GeistMono-700.ttf); }
+  :root { --bg: #050607; --ink: #f2f3ee; --muted: #8b919a; --accent: #c6ff4a; }
+  * { box-sizing: border-box; }
+  body { margin: 0; min-height: 100vh; background: var(--bg); color: var(--ink); font: 14px/1.4 'Geist Mono', ui-monospace, monospace; display: grid; place-items: center; padding: 16px; }
+  main { width: min(100%, 1280px); }
+  canvas { width: 100%; aspect-ratio: 16 / 9; display: block; border-radius: 12px; background: #000; }
+  .bar { display: flex; align-items: center; gap: 12px; margin-top: 12px; }
+  button { font: inherit; color: var(--bg); background: var(--accent); border: 0; border-radius: 999px; padding: 8px 18px; cursor: pointer; min-width: 84px; }
+  input[type=range] { flex: 1; accent-color: var(--accent); }
+  .time { color: var(--muted); min-width: 110px; text-align: right; font-variant-numeric: tabular-nums; }
+  .scene { color: var(--muted); margin-top: 8px; min-height: 1.4em; }
+</style>
+</head>
+<body>
+<main>
+  <canvas id="c" width="1920" height="1080"></canvas>
+  <div class="bar">
+    <button id="play">Play</button>
+    <input id="scrub" type="range" min="0" max="32" step="0.001" value="0">
+    <span class="time" id="time">0.00 / 32.00</span>
+  </div>
+  <div class="scene" id="scene"></div>
+  <audio id="audio" src="build/audio.wav" preload="auto"></audio>
+</main>
+<script type="module">
+  import { draw, DURATION, SCENES } from './src/scene.js';
+  const ctx = document.getElementById('c').getContext('2d');
+  const audio = document.getElementById('audio');
+  const play = document.getElementById('play');
+  const scrub = document.getElementById('scrub');
+  const time = document.getElementById('time');
+  const sceneLabel = document.getElementById('scene');
+  scrub.max = DURATION;
+
+  // the audio element is the clock when it loaded; otherwise a wall clock
+  let hasAudio = false;
+  audio.addEventListener('canplaythrough', () => { hasAudio = true; }, { once: true });
+  let playing = false, t = 0, startWall = 0, startT = 0;
+
+  const now = () => (hasAudio ? audio.currentTime : playing ? startT + (performance.now() - startWall) / 1000 : t);
+
+  function render() {
+    if (playing) {
+      t = now();
+      if (t >= DURATION) { t = 0; seek(0); }
+    }
+    draw(ctx, Math.min(t, DURATION - 1e-6));
+    scrub.value = t;
+    time.textContent = `${t.toFixed(2)} / ${DURATION.toFixed(2)}`;
+    const s = SCENES.find((s) => t >= s.from && t < s.to);
+    sceneLabel.textContent = s ? s.name : '';
+    requestAnimationFrame(render);
+  }
+
+  function seek(v) {
+    t = v;
+    startT = v;
+    startWall = performance.now();
+    if (hasAudio) audio.currentTime = v;
+  }
+
+  play.onclick = () => {
+    playing = !playing;
+    play.textContent = playing ? 'Pause' : 'Play';
+    seek(t);
+    if (hasAudio) playing ? audio.play() : audio.pause();
+  };
+  scrub.oninput = () => seek(Number(scrub.value));
+  addEventListener('keydown', (e) => {
+    if (e.code === 'Space') { e.preventDefault(); play.click(); }
+    if (e.code === 'ArrowRight') seek(Math.min(DURATION, t + 0.5));
+    if (e.code === 'ArrowLeft') seek(Math.max(0, t - 0.5));
+  });
+
+  const fams = ['400 10px Geist', '500 10px Geist', '600 10px Geist', '700 10px Geist', '800 10px Geist',
+    '400 10px "Geist Mono"', '500 10px "Geist Mono"', '700 10px "Geist Mono"'];
+  Promise.all(fams.map((f) => document.fonts.load(f))).then(() => requestAnimationFrame(render));
+</script>
+</body>
+</html>
